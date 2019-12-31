@@ -14,6 +14,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "stm32f4xx_hal.h"
 #include "ws2812.h"
@@ -245,7 +246,7 @@ static void DMA2_init(void)
 }
 
 // Transmit the frame buffer
-int ws2812b_handle()
+int ws2812b_paint()
 {
 	int cnt = 1000;
 	while(!_transferComplete && cnt--);
@@ -346,13 +347,14 @@ void ws2812b_set_pixel(uint8_t row, uint16_t column, uint8_t red, uint8_t green,
 		offset = 24 * (31 - column);
 	}
 	uint8_t mask = (0x01 << (bit % 8));
+	uint8_t not_mask = ~(mask);
 
 
 	//Green
 	for (int k = 0; k < 8; ++k)
 	{
 		if(green & (1 << (7 - k)))
-			ws2812bDmaBitBuffer[k + offset] &= ~(mask);
+			ws2812bDmaBitBuffer[k + offset] &= not_mask;
 		else
 			ws2812bDmaBitBuffer[k + offset] |= mask;
 	}
@@ -361,7 +363,7 @@ void ws2812b_set_pixel(uint8_t row, uint16_t column, uint8_t red, uint8_t green,
 	for (int k = 8; k < 16; ++k)
 	{
 		if(red & (1 << (15 - k)))
-			ws2812bDmaBitBuffer[k + offset] &= ~(mask);
+			ws2812bDmaBitBuffer[k + offset] &= not_mask;
 		else
 			ws2812bDmaBitBuffer[k + offset] |= mask;
 	}
@@ -370,7 +372,7 @@ void ws2812b_set_pixel(uint8_t row, uint16_t column, uint8_t red, uint8_t green,
 	for (int k = 16; k < 24; ++k)
 	{
 		if(blue & (1 << (23 - k)))
-			ws2812bDmaBitBuffer[k + offset] &= ~(mask);
+			ws2812bDmaBitBuffer[k + offset] &= not_mask;
 		else
 			ws2812bDmaBitBuffer[k + offset] |= mask;
 	}
@@ -393,11 +395,51 @@ void ws2812b_init()
 //	}
 
 	//clear lights but the firs DMA transfer has an error
-	while(!ws2812b_handle())
+	while(!ws2812b_paint())
 		printf("WS2812: Clear\n");
 
 	//clear again to cancel DMA error
-	while(!ws2812b_handle())
+	while(!ws2812b_paint())
 			printf("WS2812: Clear\n");
 }
 
+
+void paint(uint8_t argc, char **argv)
+{
+    printf("Painting a single color...\n");
+
+    if(argc > 3)
+    {
+        int red = atoi(argv[1]);
+        int g = atoi(argv[2]);
+        int b = atoi(argv[3]);
+
+        //      printf("Set %c = %d\n", color, val);
+        //      if(color == 'r')
+        //        {
+        for (int r = 0; r < 16; ++r) {
+            for (int c = 0; c < 16; ++c) {
+                ws2812b_set_pixel(r,c,red,g,b);
+            }
+        }
+        //        }
+        //      if(color == 'g')
+        //        {
+        //          for (int r = 0; r < 16; ++r) {
+        //              for (int c = 0; c < 16; ++c) {
+        //                  ws2812b_set_pixel(r,c,0,val,0);
+        //              }
+        //          }
+        //        }
+        //      if(color == 'b')
+        //        {
+        //          for (int r = 0; r < 16; ++r) {
+        //              for (int c = 0; c < 16; ++c) {
+        //                  ws2812b_set_pixel(r,c,0,0,val);
+        //              }
+        //          }
+        //        }
+    }
+
+    ws2812b_paint();
+}

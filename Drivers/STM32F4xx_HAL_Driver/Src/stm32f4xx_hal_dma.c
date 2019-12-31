@@ -737,7 +737,7 @@ HAL_StatusTypeDef HAL_DMA_PollForTransfer(DMA_HandleTypeDef *hdma, HAL_DMA_Level
   
   return status;
 }
-#include <stdio.h>
+
 /**
   * @brief  Handles DMA interrupt request.
   * @param  hdma pointer to a DMA_HandleTypeDef structure that contains
@@ -844,10 +844,8 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
   /* Transfer Complete Interrupt management ***********************************/
   if ((tmpisr & (DMA_FLAG_TCIF0_4 << hdma->StreamIndex)) != RESET)
   {
-	 // printf("TF complete\n");
     if(__HAL_DMA_GET_IT_SOURCE(hdma, DMA_IT_TC) != RESET)
     {
-    	  //printf("state %p\n", hdma);
       /* Clear the transfer complete flag */
       regs->IFCR = DMA_FLAG_TCIF0_4 << hdma->StreamIndex;
       
@@ -902,7 +900,6 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
       /* Disable the transfer complete interrupt if the DMA mode is not CIRCULAR */
       else
       {
-    	 // printf(" %08X \n", hdma->Instance->CR);
         if((hdma->Instance->CR & DMA_SxCR_CIRC) == RESET)
         {
           /* Disable the transfer complete interrupt */
@@ -917,7 +914,6 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
 
         if(hdma->XferCpltCallback != NULL)
         {
-        	//printf("XferCpltCallback\n");
           /* Transfer complete callback */
           hdma->XferCpltCallback(hdma);
         }

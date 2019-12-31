@@ -1,21 +1,21 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * All rights reserved.</center></h2>
+ *
+ * This software component is licensed by ST under BSD 3-Clause license,
+ * the "License"; You may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at:
+ *                        opensource.org/licenses/BSD-3-Clause
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -24,10 +24,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "Utils/terminal.h"
 #include "ws2812.h"
+#include "cpp_run.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,6 +46,8 @@
 /* Private variables ---------------------------------------------------------*/
 RTC_HandleTypeDef hrtc;
 
+SPI_HandleTypeDef hspi3;
+
 TIM_HandleTypeDef htim1;
 
 UART_HandleTypeDef huart2;
@@ -60,6 +61,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_RTC_Init(void);
+static void MX_SPI3_Init(void);
 static void MX_TIM1_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -67,208 +69,6 @@ static void MX_TIM1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-void visInit()
-{
-	ws2812b_init();
-}
-
-void visHandle()
-{
-	ws2812b_handle();
-}
-
-void paint(uint8_t argc, char **argv)
-{
-	printf("Painting...\n");
-
-	if(argc > 3)
-	{
-		int red = atoi(argv[1]);
-		int g = atoi(argv[2]);
-		int b = atoi(argv[3]);
-
-//		printf("Set %c = %d\n", color, val);
-//		if(color == 'r')
-//		  {
-			for (int r = 0; r < 16; ++r) {
-				for (int c = 0; c < 16; ++c) {
-					ws2812b_set_pixel(r,c,red,g,b);
-				}
-			}
-//		  }
-//		if(color == 'g')
-//		  {
-//			for (int r = 0; r < 16; ++r) {
-//				for (int c = 0; c < 16; ++c) {
-//					ws2812b_set_pixel(r,c,0,val,0);
-//				}
-//			}
-//		  }
-//		if(color == 'b')
-//		  {
-//			for (int r = 0; r < 16; ++r) {
-//				for (int c = 0; c < 16; ++c) {
-//					ws2812b_set_pixel(r,c,0,0,val);
-//				}
-//			}
-//		  }
-	}
-
-	visHandle();
-}
-
-
-int mix_state = 0;
-int mix_delta = 8;
-int main_delta = 8;
-void animate_mix(int *r, int *g, int *b)
-{
-	 switch(mix_state)
-	 {
-	 //mix green
-	 case 0:
-		 *g += mix_delta;
-		 if((*g > 255) || (*g <= 0))
-		 {
-			 if(*g <= 0)
-				 *g = 0;
-			 if(*g > 255)
-				 *g = 255;
-
-			 mix_delta *= -1;
-
-			 *r = *r + main_delta;
-			 if((*r > 255) || (*r <= 0))
-			 {
-				 if(*r <= 0)
-					 *r = 0;
-				 if(*r > 255)
-					 *r = 255;
-
-				 main_delta *= -1;
-				 mix_state = 1;
-			 }
-		 }
-		 break;
-		 //mix blue
-	 case 1:
-		 *b += mix_delta;
-		 if((*b > 255) || (*b <= 0))
-		 {
-			 if(*b <= 0)
-				 *b = 0;
-			 if(*b > 255)
-				 *b = 255;
-
-			 mix_delta *= -1;
-
-			 *r = *r + main_delta;
-			 if((*r > 255) || (*r <= 0))
-			 {
-				 if(*r <= 0)
-					 *r = 0;
-				 if(*r > 255)
-					 *r = 255;
-
-				 main_delta *= -1;
-				 mix_state = 2;
-			 }
-		 }
-		 break;
-		 //mix red and blue
-	 case 2:
-		 *g += mix_delta;
-		 *b += mix_delta;
-		 if((*g > 255) || (*g <= 0))
-		 {
-			 if(*b <= 0)
-				 *b = 0;
-			 if(*b > 255)
-				 *b = 255;
-
-			 if(*g <= 0)
-				 *g = 0;
-			 if(*g > 255)
-				 *g = 255;
-
-			 mix_delta *= -1;
-
-			 *r = *r + main_delta;
-			 if((*r > 255) || (*r < 0))
-			 {
-				 if(*r <= 0)
-					 *r = 0;
-				 if(*r > 255)
-					 *r = 255;
-
-				 main_delta *= -1;
-				 mix_state = 0;
-			 }
-		 }
-		 break;
-	 }
-}
-
-int row_delta = 1;
-void animate_column_run(int *row)
-{
-	*row += row_delta;
-
-	if(*row > 15)
-	{
-		row_delta *= -1;
-		*row = 14;
-	}
-	if(*row < 0)
-	{
-		row_delta *= -1;
-		*row = 1;
-	}
-}
-
-double radius = 100;
-int red_row = 15;
-int red_col = 0;
-int green_row = 0;
-int green_col = 7;
-int blue_row = 15;
-int blue_col = 15;
-double scale = 1;//0.9;
-
-void get_scale(int row, int col, int *r, int *g, int *b)
-{
-	//red distance (15, 0)
-	int delta_r = red_row - row;
-	int delta_c = red_col - col;
-	int distance = (delta_r *delta_r) + (delta_c * delta_c);
-	double factor = 1.0 - ((double)distance / radius);
-	if(factor < 0)
-		factor = 0;
-	//printf("R (%d, %d), dr: %d, dc %d, d %d, f %f\n", row, col, delta_r, delta_c, distance, factor);
-	*r = factor * 255.0 * scale;
-
-	//green distance (0, 7)
-	delta_r = green_row - row;
-	delta_c = green_col - col;
-	distance = (delta_r *delta_r) + (delta_c * delta_c);
-	factor = 1.0 - ((double)distance / radius);
-	if(factor < 0)
-		factor = 0;
-	//printf("G (%d, %d), dr: %d, dc %d, d %d, f %f\n", row, col, delta_r, delta_c, distance, factor);
-	*g = factor * 255.0 * scale;
-
-	//blue distance (15, 15)
-	delta_r = blue_row - row;
-	delta_c = blue_col - col;
-	distance = (delta_r *delta_r) + (delta_c * delta_c);
-	factor = 1.0 - ((double)distance / radius);
-	if(factor < 0)
-		factor = 0;
-	//printf("B (%d, %d), dr: %d, dc %d, d %d, f %f\n", row, col, delta_r, delta_c, distance, factor);
-	*b = factor * 255.0 * scale;
-}
-
 /* USER CODE END 0 */
 
 /**
@@ -302,107 +102,34 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_RTC_Init();
+  MX_SPI3_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
 
-  setbuf(stdout, 0);
-  printf("LED Wall art\n");
-  printf("SYSCLOCK: %lu Hz\n", HAL_RCC_GetSysClockFreq());
-  printf("HCLOCK  : %lu Hz\n", HAL_RCC_GetHCLKFreq());
-  printf("P1CLOCK : %lu Hz\n", HAL_RCC_GetPCLK1Freq());
-  printf("P2CLOCK : %lu Hz\n", HAL_RCC_GetPCLK2Freq());
+    setbuf(stdout, 0);
+    printf("LED Wall art\n");
+    printf("SYSCLOCK: %lu Hz\n", HAL_RCC_GetSysClockFreq());
+    printf("HCLOCK  : %lu Hz\n", HAL_RCC_GetHCLKFreq());
+    printf("P1CLOCK : %lu Hz\n", HAL_RCC_GetPCLK1Freq());
+    printf("P2CLOCK : %lu Hz\n", HAL_RCC_GetPCLK2Freq());
 
-  //SystemCorecClockUpdate();
+    terminal_init("art $");
 
-  visInit();
+    ws2812b_init();
+    cpp_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  terminal_init("art $");
 
-  uint32_t tick = 0;
-  //int row = 0;
-  //int column = 0;
-  int red_delta = 1;
-  int green_delta = 1;
-  int blue_delta = 1;
-  int r = 0,g = 0,b = 0;
-  ws2812b_handle();
-
-  while (1)
-  {
-	  terminal_run();
+    while (1)
+    {
+        terminal_run();
+        cpp_run();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  if(tick < HAL_GetTick())
-	  {
-		  tick = HAL_GetTick() + 100;
-		  ws2812b_clear();
-
-//		  animate_mix(&r, &g, &b);
-//
-//		  //printf("(%3d, %3d, %3d)\n", r, g, b);
-//
-//		  for (int row = 0; row < 16; ++row)
-//		  {
-//			  for (int col = 0; col < 16; ++col)
-//			  {
-//				  ws2812b_set_pixel(col, row, r, g, b);
-//			  }
-//		  }
-//
-		  red_row += red_delta;
-		  if(red_row > 15)
-		  {
-			  red_row = 14;
-			  red_delta *= -1;
-		  }
-		  if(red_row < 0)
-		  {
-			  red_row = 1;
-			  red_delta *= -1;
-		  }
-
-		  green_row += green_delta;
-		  if(green_row > 15)
-		  {
-			  green_row = 14;
-			  green_delta *= -1;
-		  }
-		  if(green_row < 0)
-		  {
-			  green_row = 1;
-			  green_delta *= -1;
-		  }
-
-		  blue_row += blue_delta;
-		  if(blue_row > 15)
-		  {
-			  blue_row = 14;
-			  blue_delta *= -1;
-		  }
-		  if(blue_row < 0)
-		  {
-			  blue_row = 1;
-			  blue_delta *= -1;
-		  }
-
-		  for (int row = 0; row < 16; ++row)
-		  {
-			  for (int col = 0; col < 16; ++col)
-			  {
-				  get_scale(row, col, &r, &g, &b);
-				  ws2812b_set_pixel(row, col, r, g, b);
-			  }
-		  }
-//		  ws2812b_set_pixel(red_row, red_col, 255, 0, 0);
-//		  ws2812b_set_pixel(green_row, green_col, 0, 255, 0);
-//		  ws2812b_set_pixel(blue_row, blue_col, 0, 0, 255);
-		  ws2812b_handle();
-	  }
-  }
+    }
   /* USER CODE END 3 */
 }
 
@@ -491,6 +218,44 @@ static void MX_RTC_Init(void)
 }
 
 /**
+  * @brief SPI3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI3_Init(void)
+{
+
+  /* USER CODE BEGIN SPI3_Init 0 */
+
+  /* USER CODE END SPI3_Init 0 */
+
+  /* USER CODE BEGIN SPI3_Init 1 */
+
+  /* USER CODE END SPI3_Init 1 */
+  /* SPI3 parameter configuration*/
+  hspi3.Instance = SPI3;
+  hspi3.Init.Mode = SPI_MODE_MASTER;
+  hspi3.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi3.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi3.Init.NSS = SPI_NSS_SOFT;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi3.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI3_Init 2 */
+
+  /* USER CODE END SPI3_Init 2 */
+
+}
+
+/**
   * @brief TIM1 Initialization Function
   * @param None
   * @retval None
@@ -564,7 +329,7 @@ static void MX_USART2_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART2_Init 2 */
-  __HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
+    __HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
   /* USER CODE END USART2_Init 2 */
 
 }
@@ -582,10 +347,14 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(SPI3_CS_GPIO_Port, SPI3_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
@@ -600,25 +369,32 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : SPI3_CS_Pin */
+  GPIO_InitStruct.Pin = SPI3_CS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(SPI3_CS_GPIO_Port, &GPIO_InitStruct);
+
 }
 
 /* USER CODE BEGIN 4 */
 int __io_putchar(int ch)
 {
-	if(ch == '\r')
-	{
-		uint8_t byte = '\n';
-		HAL_UART_Transmit(&huart2, &byte, 1, 100);
-	}
-	if(ch == '\n')
-	{
-		uint8_t byte = '\r';
-		HAL_UART_Transmit(&huart2, &byte, 1, 100);
-	}
+    if(ch == '\r')
+    {
+        uint8_t byte = '\n';
+        HAL_UART_Transmit(&huart2, &byte, 1, 100);
+    }
+    if(ch == '\n')
+    {
+        uint8_t byte = '\r';
+        HAL_UART_Transmit(&huart2, &byte, 1, 100);
+    }
 
-	HAL_UART_Transmit(&huart2, (uint8_t*)&ch, 1, 100);
+    HAL_UART_Transmit(&huart2, (uint8_t*)&ch, 1, 100);
 
-	return 0;
+    return 0;
 }
 
 /* USER CODE END 4 */
@@ -630,7 +406,7 @@ int __io_putchar(int ch)
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
+    /* User can add his own implementation to report the HAL error return state */
 
   /* USER CODE END Error_Handler_Debug */
 }
@@ -646,7 +422,7 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 { 
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
+    /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
