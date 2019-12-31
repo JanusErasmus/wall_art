@@ -72,6 +72,7 @@
 									<listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/wall_art/Utils/Include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/wall_art/Adafruit_GFX/Include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/wall_art/lib8tion/Include}&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp.1968310495" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp"/>
 							</tool>

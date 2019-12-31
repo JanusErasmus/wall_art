@@ -2,37 +2,55 @@
 #include "Adafruit_GFX.h"
 #include "ws2812.h"
 
-AnimateDisco disco;
-GFXcanvas16 matrix(16, 16);
+#include "main.h"
 
-void sync_GFX()
-{
-    uint16_t *buffer = matrix.getBuffer();
+#include "PatternBounce.h"
+#include "PatternFlock.h"
+#include "PatternSwirl.h"
+#include "PatternSpiral.h"
+#include "PatternSpiro.h"
+#include "PatternWave.h"
+#include "PatternRadar.h"
+#include "PatternPendulumWave.h"
+#include "PatternIncrementalDrift.h"
+#include "PatternFlowField.h"
+#include "PatternAttract.h"
+#include "PatternCube.h"
+#include "Effects.h"
+extern Effects *effects;
 
-    for (int x = 0; x < 16; ++x)
-    {
-        for (int y = 0; y < 16; ++y)
-        {
-            uint8_t r = (buffer[x + y * 16] & 0xF800) >> 8;
-            uint8_t g = (buffer[x + y * 16] & 0x07E0) >> 3;
-            uint8_t b = (buffer[x + y * 16] & 0x1F) << 3;
-            ws2812b_set_pixel(x, y, r, g, b);
-        }
-    }
-    ws2812b_paint();
-}
-
+//AnimateDisco disco;
+//PatternBounce bounce;
+//PatternFlock flock;
+//PatternSwirl swirl;
+//PatternSpiral spiral;
+//PatternSpiro spiro; NOT
+//PatternWave wave;
+//PatternRadar radar;
+//PatternPendulumWave p_wave;
+//PatternIncrementalDrift drift;
+//PatternFlowField flow; NOT
+PatternAttract attract;
+PatternCube cube;
 extern "C" {
 void cpp_init()
 {
-    matrix.setRotation(1);
-    matrix.fillCircle(7, 7, 7, 0x001f);
-    matrix.fillCircle(7, 7, 3, 0xf800);
-    matrix.fillCircle(7, 7, 1, 0x07e0);
+    matrix = new Matrix();
+    effects = new Effects();
+    effects->Setup(matrix->getBuffer());
 
+    //flock.start();
+    //bounce.start();
+    //swirl.start();
+    //spiral.start();
+    //wave.start();
+    //radar.start();
+    //p_wave.start();
+    //drift.start();
+    //flow.start();
+    attract.start();
+    cube.start();
 
-
-    sync_GFX();
 }
 
 uint32_t tick = 0;
@@ -43,7 +61,18 @@ void cpp_run()
 
     if(tick < HAL_GetTick())
     {
-        tick = HAL_GetTick() + 1000;
+        tick = HAL_GetTick() + 20;
+        //bounce.drawFrame();
+        //flock.drawFrame();
+        //swirl.drawFrame();
+        //spiral.drawFrame();
+        //wave.drawFrame();
+        //radar.drawFrame();
+        //p_wave.drawFrame();
+        //drift.drawFrame();
+        //flow.drawFrame();
+        attract.drawFrame();
+        //cube.drawFrame();
     }
 }
 }
