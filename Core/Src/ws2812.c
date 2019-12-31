@@ -1,10 +1,21 @@
 /*
 
-  WS2812B CPU and memory efficient library
+  WS2812B DMA <---> GPIO driver
 
-  Date: 28.9.2016
+  Date: 28.12.2019
+    The driver uses a (3 * 256) 768 byte buffer to draw all 256 Neo pixels on GPIOC[0 - 8]
+    Each bit is clocked out using TIMER2 and DMA2 channel 6, Stream 2
+    Pixel data has to be transposed in to the buffer using the ws2812_set_pixel function
 
-  Author: Martin Hubacek
+    When ws2812_paint is called, the 256 Neo pixels are updated.
+     - The matrix if Neo pixels ahs to be wired in 8 strings of 16 pixels.
+     - The DMA clocks the 768 bytes directly out of the lower 8 bits of GPIOC.
+       - Each 3 bytes will be pixel colors for a row of pixels
+       - The 8 GPIO's updates 16 pixels consecutively.
+       - Thus it takes (1.25 us * 16) 20 ms to update the matrix.
+
+    Based on the driver from:
+    Author: Martin Hubacek
   	  	  http://www.martinhubacek.cz
   	  	  @hubmartin
 
@@ -18,7 +29,6 @@
 
 #include "stm32f4xx_hal.h"
 #include "ws2812.h"
-
 
 static TIM_HandleTypeDef  TIM1_handle;
 static TIM_OC_InitTypeDef tim2OC1;
@@ -326,56 +336,55 @@ void ws2812b_clear()
 	memset(ws2812bDmaBitBuffer, 0xff, sizeof(ws2812bDmaBitBuffer));
 }
 
-
 void ws2812b_set_pixel(uint8_t row, uint16_t column, uint8_t red, uint8_t green, uint8_t blue)
 {
-	if(row  > 15)
-		return;
+    if(row  > 15)
+        return;
 
-	if(column > 15)
-		return;
+    if(column > 15)
+        return;
 
-	// Apply gamma
-		red = gammaTable[red];
-		green = gammaTable[green];
-		blue = gammaTable[blue];
+    // Apply gamma
+    red = gammaTable[red];
+    green = gammaTable[green];
+    blue = gammaTable[blue];
 
-	int offset = column * 24;
-	int bit = row / 2;
-	if(row && (row % 2))
-	{
-		offset = 24 * (31 - column);
-	}
-	uint8_t mask = (0x01 << (bit % 8));
-	uint8_t not_mask = ~(mask);
+    int offset = column * 24;
+    int bit = row / 2;
+    if(row && (row % 2))
+    {
+        offset = 24 * (31 - column);
+    }
+    uint8_t mask = (0x01 << (bit % 8));
+    uint8_t not_mask = ~(mask);
 
 
-	//Green
-	for (int k = 0; k < 8; ++k)
-	{
-		if(green & (1 << (7 - k)))
-			ws2812bDmaBitBuffer[k + offset] &= not_mask;
-		else
-			ws2812bDmaBitBuffer[k + offset] |= mask;
-	}
+    //Green
+    for (int k = 0; k < 8; ++k)
+    {
+        if(green & (1 << (7 - k)))
+            ws2812bDmaBitBuffer[k + offset] &= not_mask;
+        else
+            ws2812bDmaBitBuffer[k + offset] |= mask;
+    }
 
-	//red
-	for (int k = 8; k < 16; ++k)
-	{
-		if(red & (1 << (15 - k)))
-			ws2812bDmaBitBuffer[k + offset] &= not_mask;
-		else
-			ws2812bDmaBitBuffer[k + offset] |= mask;
-	}
+    //red
+    for (int k = 8; k < 16; ++k)
+    {
+        if(red & (1 << (15 - k)))
+            ws2812bDmaBitBuffer[k + offset] &= not_mask;
+        else
+            ws2812bDmaBitBuffer[k + offset] |= mask;
+    }
 
-	//blue
-	for (int k = 16; k < 24; ++k)
-	{
-		if(blue & (1 << (23 - k)))
-			ws2812bDmaBitBuffer[k + offset] &= not_mask;
-		else
-			ws2812bDmaBitBuffer[k + offset] |= mask;
-	}
+    //blue
+    for (int k = 16; k < 24; ++k)
+    {
+        if(blue & (1 << (23 - k)))
+            ws2812bDmaBitBuffer[k + offset] &= not_mask;
+        else
+            ws2812bDmaBitBuffer[k + offset] |= mask;
+    }
 }
 
 
@@ -403,7 +412,7 @@ void ws2812b_init()
 			printf("WS2812: Clear\n");
 }
 
-
+//debug function to set all pixels
 void paint(uint8_t argc, char **argv)
 {
     printf("Painting a single color...\n");
