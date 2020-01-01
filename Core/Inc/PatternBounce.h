@@ -27,27 +27,39 @@
 #include "Boid.h"
 #include "colorutils.h"
 
+#define AVAILABLE_BOID_COUNT 16
+
 class PatternBounce : public Drawable {
 private:
     static const int count = mmin(MATRIX_WIDTH, AVAILABLE_BOID_COUNT);
+    Boid *boids[AVAILABLE_BOID_COUNT];
     PVector gravity = PVector(0, 0.0125);
 
 public:
     PatternBounce(Effects *effects) : Drawable(effects) {
         name = (char *)"Bounce";
+        for (int i = 0; i < count; i++) {
+            boids[i] = new Boid();
+        }
+    }
+
+    virtual ~PatternBounce() {
+        for (int i = 0; i < count; i++) {
+            delete boids[i];
+        }
     }
 
     void start() {
         unsigned int colorWidth = 256 / count;
         for (int i = 0; i < count; i++) {
-            //Boid boid = Boid(i, 0);
-            Boid boid = Boid(i, 0);
-            boid.velocity.x = 0;// 0.02;
-            boid.velocity.y = i * -0.01;
-            boid.colorIndex = colorWidth * i;
-            boid.maxforce = 10;
-            boid.maxspeed = 10;
-            boids[i] = boid;
+            Boid *boid = boids[i];
+            boid->location.x = i;
+            boid->location.y = 0;
+            boid->velocity.x = 0;// 0.02;
+            boid->velocity.y = i * -0.01;
+            boid->colorIndex = colorWidth * i;
+            boid->maxforce = 10;
+            boid->maxspeed = 10;
         }
     }
 
@@ -63,39 +75,37 @@ public:
 
         for (int i = 0; i < count; i++)
         {
-            Boid boid = boids[i];
+            Boid *boid = boids[i];
 
-            boid.applyForce(gravity);
+            boid->applyForce(gravity);
 
-            float oldY = boid.location.y;
-            boid.update();
+            float oldY = boid->location.y;
+            boid->update();
 
-            CRGB color = effects->ColorFromCurrentPalette(boid.colorIndex);
-            if(boid.location.y > oldY)
+            CRGB color = effects->ColorFromCurrentPalette(boid->colorIndex);
+            if(boid->location.y > oldY)
             {
-                for(float y = oldY; y < boid.location.y; y++)
+                for(float y = oldY; y < boid->location.y; y++)
                 {
-                    matrix->drawPixel(boid.location.x, y, color);
+                    matrix->drawPixel(boid->location.x, y, color);
                 }
             }
             else
             {
-                for(float y = boid.location.y; y < oldY; y++)
+                for(float y = boid->location.y; y < oldY; y++)
                 {
-                    matrix->drawPixel(boid.location.x, y, color);
+                    matrix->drawPixel(boid->location.x, y, color);
                 }
             }
 
             // drawPixel takes care of it
-            matrix->drawPixel(boid.location.x, boid.location.y, color);
+            matrix->drawPixel(boid->location.x, boid->location.y, color);
 
-            if (boid.location.y >= MATRIX_HEIGHT - 1)
+            if (boid->location.y >= MATRIX_HEIGHT - 1)
             {
-                boid.location.y = MATRIX_HEIGHT - 1;
-                boid.velocity.y *= -1.0;
+                boid->location.y = MATRIX_HEIGHT - 1;
+                boid->velocity.y *= -1.0;
             }
-
-            boids[i] = boid;
         }
 
         matrix->paint();

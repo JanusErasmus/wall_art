@@ -29,11 +29,21 @@
 class PatternAttract : public Drawable {
 private:
     const int count = mmin(MATRIX_HEIGHT/3, AVAILABLE_BOID_COUNT);
+    Boid *boids[AVAILABLE_BOID_COUNT];
     Attractor attractor;
 
 public:
     PatternAttract(Effects *effects) : Drawable(effects) {
         name = (char *)"Attract";
+        for (int i = 0; i < count; i++) {
+            boids[i] = new Boid();
+        }
+    }
+
+    virtual ~PatternAttract() {
+        for (int i = 0; i < count; i++) {
+            delete boids[i];
+        }
     }
 
     void start() {
@@ -42,15 +52,16 @@ public:
             direction = -1;
 
         for (int i = 0; i < count; i++) {
-            Boid boid = Boid(MATRIX_CENTER_X - 1, (MATRIX_HEIGHT - 1) - i);
-            boid.mass = 1; // random(0.1, 2);
+            Boid *boid = boids[i];
+            boid->location.x = MATRIX_CENTER_X - 1;
+            boid->location.y = MATRIX_CENTER_Y - 1;
+            boid->mass = 1; // random(0.1, 2);
             // boid.velocity.x = ((float) random(40, 50)) / 100.0;
-            boid.velocity.x = ((float) (random() % 60) + 20) / 100.0;
-            boid.velocity.x *= direction;
-            boid.velocity.y = 0;
+            boid->velocity.x = ((float) (random() % 60) + 20) / 100.0;
+            boid->velocity.x *= direction;
+            boid->velocity.y = 0;
             //boid.colorIndex = i * 32;
-            boid.colorIndex = i * (240 / count);
-            boids[i] = boid;
+            boid->colorIndex = i * (240 / count);
             //dim = random(170, 250);
         }
     }
@@ -63,17 +74,16 @@ public:
         effects->DimAll(dim);
 
         for (int i = 0; i < count; i++) {
-            Boid boid = boids[i];
+            Boid *boid = boids[i];
 
             PVector force = attractor.attract(boid);
-            boid.applyForce(force);
+            boid->applyForce(force);
 
-            boid.update();
+            boid->update();
 
-            CRGB color = effects->ColorFromCurrentPalette(boid.colorIndex);
-            matrix->drawPixel(boid.location.x, boid.location.y, color);
+            CRGB color = effects->ColorFromCurrentPalette(boid->colorIndex);
+            matrix->drawPixel(boid->location.x, boid->location.y, color);
 
-            boids[i] = boid;
         }
 
         matrix->paint();

@@ -43,6 +43,7 @@ public:
     }
 
     static const int boidCount = mmin(MATRIX_WIDTH/3, AVAILABLE_BOID_COUNT);
+    Boid boids[5];
     Boid predator;
 
     PVector wind;

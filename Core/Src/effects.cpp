@@ -25,7 +25,9 @@ Effects::Effects(Matrix *matrix)
 {
     this->matrix = matrix;
     leds = matrix->getBuffer();
-    currentPalette = ForestColors_p;//HeatColors_p;//LavaColors_p;// OceanColors_p;//CloudColors_p;//setupGrayscalePalette();//setupIcePalette();//RainbowColors_p;//RainbowStripeColors_p; //PartyColors_p;setupIcePalette
+    //setupIcePalette();//
+    currentPalette = LavaColors_p;//OceanColors_p;//ForestColors_p;//HeatColors_p;// CloudColors_p;//setupGrayscalePalette();//RainbowColors_p;//RainbowStripeColors_p; //PartyColors_p;setupIcePalette
+
     //ShowFrame();
     //loadPalette(0);
     NoiseVariablesSetup();
