@@ -19,16 +19,16 @@
 #include "Effects.h"
 extern Effects *effects;
 
-//AnimateDisco disco;
-//PatternBounce bounce;
-//PatternFlock flock;
-//PatternSwirl swirl;
-//PatternSpiral spiral;
+AnimateDisco disco;
+PatternBounce bounce;
+PatternFlock flock;
+PatternSwirl swirl;
+//PatternSpiral spiral; NOT
 //PatternSpiro spiro; NOT
-//PatternWave wave;
-//PatternRadar radar;
-//PatternPendulumWave p_wave;
-//PatternIncrementalDrift drift;
+PatternWave wave;
+PatternRadar radar;
+PatternPendulumWave p_wave;
+PatternIncrementalDrift drift;
 //PatternFlowField flow; NOT
 PatternAttract attract;
 PatternCube cube;
@@ -39,15 +39,13 @@ void cpp_init()
     effects = new Effects();
     effects->Setup(matrix->getBuffer());
 
-    //flock.start();
-    //bounce.start();
-    //swirl.start();
-    //spiral.start();
-    //wave.start();
-    //radar.start();
-    //p_wave.start();
-    //drift.start();
-    //flow.start();
+    flock.start();
+    bounce.start();
+    swirl.start();
+    wave.start();
+    radar.start();
+    p_wave.start();
+    drift.start();
     attract.start();
     cube.start();
 
