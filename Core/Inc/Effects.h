@@ -31,17 +31,8 @@
 #include <Utils/utils.h>
 
 #include "matrix.h"
-#include "hsv2rgb.h"
 #include "colorpalettes.h"
-#include "noise.h"
 
-void drawForegroundHLine(int16_t x0, int16_t x1, int16_t y);
-void fillForegroundRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
-uint8_t beatcos8(accum88 beats_per_minute, uint8_t lowest = 0, uint8_t highest = 255, uint32_t timebase = 0, uint8_t phase_offset = 0);
-uint8_t beattriwave8(accum88 beats_per_minute, uint8_t lowest = 0, uint8_t highest = 255, uint32_t timebase = 0, uint8_t phase_offset = 0);
-uint8_t mapsin8(uint8_t theta, uint8_t lowest = 0, uint8_t highest = 255);
-uint8_t mapcos8(uint8_t theta, uint8_t lowest = 0, uint8_t highest = 255);
-uint16_t XY( uint8_t x, uint8_t y);
 
 #define MAX_COLOR_VALUE 255
 
@@ -84,7 +75,6 @@ public:
     void CircleStream(uint8_t value);
 
     // palettes
-
     static const int HeatColorsPaletteIndex = 6;
     static const int RandomPaletteIndex = 9;
 
@@ -95,6 +85,10 @@ public:
     void setPalette(/*String paletteName*/);
     void setupGrayscalePalette();
     void setupIcePalette();
+
+    void drawForegroundHLine(int16_t x0, int16_t x1, int16_t y);
+    void fillForegroundRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
+    uint16_t XY( uint8_t x, uint8_t y);
 
 
     // Oscillators and Emitters

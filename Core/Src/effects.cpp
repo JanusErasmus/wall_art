@@ -1,6 +1,9 @@
-
 #include "Effects.h"
 Effects *effects;
+
+
+#include "hsv2rgb.h"
+#include "noise.h"
 
 const CRGBPalette16 WoodFireColors_p = CRGBPalette16(CRGB::Black, CRGB::OrangeRed, CRGB::Orange, CRGB::Gold);            //* Orange
 const CRGBPalette16 SodiumFireColors_p = CRGBPalette16(CRGB::Black, CRGB::Orange, CRGB::Gold, CRGB::Goldenrod);          //* Yellow
@@ -21,7 +24,7 @@ const CRGBPalette16 palettes[] = {
         HeatColors_p
 };
 
-void drawForegroundHLine(int16_t x0, int16_t x1, int16_t y) {
+void Effects::drawForegroundHLine(int16_t x0, int16_t x1, int16_t y) {
     // make sure line goes from x0 to x1
     if (x1 < x0)
         SWAPint(x1, x0);
@@ -44,7 +47,7 @@ void drawForegroundHLine(int16_t x0, int16_t x1, int16_t y) {
     }
 }
 
-void fillForegroundRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1) {
+void Effects::fillForegroundRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1) {
     int i;
     // Loop only works if y1 > y0
     if (y0 > y1) {
@@ -60,46 +63,12 @@ void fillForegroundRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1) {
     }
 }
 
-uint8_t beatcos8(accum88 beats_per_minute, uint8_t lowest, uint8_t highest, uint32_t timebase, uint8_t phase_offset)
-{
-    uint8_t beat = beat8(beats_per_minute, timebase);
-    uint8_t beatcos = cos8(beat + phase_offset);
-    uint8_t rangewidth = highest - lowest;
-    uint8_t scaledbeat = scale8(beatcos, rangewidth);
-    uint8_t result = lowest + scaledbeat;
-    return result;
-}
 
-uint8_t beattriwave8(accum88 beats_per_minute, uint8_t lowest, uint8_t highest, uint32_t timebase, uint8_t phase_offset)
-{
-    uint8_t beat = beat8(beats_per_minute, timebase);
-    uint8_t beatcos = triwave8(beat + phase_offset);
-    uint8_t rangewidth = highest - lowest;
-    uint8_t scaledbeat = scale8(beatcos, rangewidth);
-    uint8_t result = lowest + scaledbeat;
-    return result;
-}
-
-uint8_t mapsin8(uint8_t theta, uint8_t lowest, uint8_t highest) {
-    uint8_t beatsin = sin8(theta);
-    uint8_t rangewidth = highest - lowest;
-    uint8_t scaledbeat = scale8(beatsin, rangewidth);
-    uint8_t result = lowest + scaledbeat;
-    return result;
-}
-
-uint8_t mapcos8(uint8_t theta, uint8_t lowest, uint8_t highest) {
-    uint8_t beatcos = cos8(theta);
-    uint8_t rangewidth = highest - lowest;
-    uint8_t scaledbeat = scale8(beatcos, rangewidth);
-    uint8_t result = lowest + scaledbeat;
-    return result;
-}
-
-uint16_t XY( uint8_t x, uint8_t y)
+uint16_t Effects::XY( uint8_t x, uint8_t y)
 {
     return matrix->XY(x,y);
 }
+
 
 Effects::Effects()
 {

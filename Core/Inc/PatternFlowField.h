@@ -21,6 +21,7 @@
 */
 
 #include "matrix.h"
+#include "noise.h"
 
 #ifndef PatternFlowField_H
 

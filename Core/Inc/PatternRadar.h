@@ -25,39 +25,39 @@
 #include "matrix.h"
 
 class PatternRadar : public Drawable {
-  private:
+private:
     byte theta = 0;
     byte hueoffset = 0;
 
-  public:
+public:
     PatternRadar() {
-      name = (char *)"Radar";
+        name = (char *)"Radar";
     }
 
     unsigned int drawFrame() {
-      if (MATRIX_WIDTH < 25) {
-          effects->DimAll(252);
-      } else {
-          effects->DimAll(245);
-      }
-
-      for (int offset = 0; offset < MATRIX_CENTER_X; offset++) {
-        //byte hue = 255 - (offset * 16 + hueoffset);
-	byte hue = 255 - (offset * (256 / MATRIX_CENTER_X) + hueoffset);
-        CRGB color = effects->ColorFromCurrentPalette(hue);
-        uint8_t x = mapcos8(theta, offset, (MATRIX_WIDTH - 1) - offset);
-        uint8_t y = mapsin8(theta, offset, (MATRIX_HEIGHT - 1) - offset);
-        uint16_t xy = XY(x, y);
-        effects->leds[xy] = color;
-
-        EVERY_N_MILLIS(25) {
-          theta += 2;
-          hueoffset += 1;
+        if (MATRIX_WIDTH < 25) {
+            effects->DimAll(252);
+        } else {
+            effects->DimAll(245);
         }
-      }
 
-      matrix->paint();
-      return 0;
+        for (int offset = 0; offset < MATRIX_CENTER_X; offset++) {
+
+            byte hue = 255 - (offset * (256 / MATRIX_CENTER_X) + hueoffset);
+            CRGB color = effects->ColorFromCurrentPalette(hue);
+            uint8_t x = mapcos8(theta, offset, (MATRIX_WIDTH - 1) - offset);
+            uint8_t y = mapsin8(theta, offset, (MATRIX_HEIGHT - 1) - offset);
+            uint16_t xy = effects->XY(x, y);
+            effects->leds[xy] = color;
+
+            EVERY_N_MILLIS(25) {
+                theta += 2;
+                hueoffset += 1;
+            }
+        }
+
+        matrix->paint();
+        return 0;
     }
 };
 
