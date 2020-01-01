@@ -4,7 +4,7 @@
 #include "ws2812.h"
 #include "main.h"
 
-AnimateDisco::AnimateDisco()
+AnimateDisco::AnimateDisco(Effects *effects) : Drawable(effects)
 {
     tick = 0;
     radius = 150;
@@ -25,7 +25,7 @@ AnimateDisco::~AnimateDisco()
 {
 }
 
-void AnimateDisco::run()
+unsigned int AnimateDisco::drawFrame()
 {
     if(tick < HAL_GetTick())
     {
@@ -111,6 +111,8 @@ void AnimateDisco::run()
         //        ws2812b_set_pixel(blue_row, blue_col, 0, 0, 255);
         ws2812b_paint();
     }
+
+    return 0;
 }
 
 

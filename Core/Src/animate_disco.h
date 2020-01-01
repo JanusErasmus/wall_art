@@ -1,8 +1,8 @@
 #ifndef SRC_ANIMATE_DISCO_H_
 #define SRC_ANIMATE_DISCO_H_
-#include <stdint.h>
+#include "Drawable.h"
 
-class AnimateDisco
+class AnimateDisco : public Drawable
 {
     uint32_t tick = 0;
     double radius;
@@ -21,10 +21,10 @@ class AnimateDisco
     void get_scale(int row, int col, int *r, int *g, int *b);
 
 public:
-    AnimateDisco();
+    AnimateDisco(Effects *effects);
     virtual ~AnimateDisco();
 
-    void run();
+    unsigned int drawFrame();
 };
 
 #endif /* SRC_ANIMATE_DISCO_H_ */

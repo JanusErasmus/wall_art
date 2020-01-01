@@ -23,18 +23,16 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
-
 #ifndef PatternSwirl_H
-
-#include "matrix.h"
+#define PatternSwirl_H
+#include "Drawable.h"
 
 class PatternSwirl : public Drawable {
 private:
     const uint8_t borderWidth = 0;
 
 public:
-    PatternSwirl() {
+    PatternSwirl(Effects *effects) : Drawable(effects) {
         name = (char *)"Swirl";
     }
 
@@ -47,18 +45,9 @@ public:
         // blur it repeatedly.  Since the blurring is 'lossy', there's
         // an automatic trend toward black -- by design.
         uint8_t blurAmount = beatsin8(2, 128, 255);
+        Matrix *matrix = effects->getMatrix();
 
-#if FASTLED_VERSION >= 3001000
-        // FIXME: the 2D blur isnot blurry/spread enough on higher res screens
-        if (MATRIX_WIDTH < 25) {
-            blur2d(effects.leds, MATRIX_WIDTH, MATRIX_HEIGHT, blurAmount);
-        } else {
-            // Never mind, on my 64x96 array, the dots are just too small
-            blur2d(effects.leds, MATRIX_WIDTH, MATRIX_HEIGHT, 172);
-        }
-#else
         effects->DimAll(blurAmount);
-#endif
 
         // Use two out-of-sync sine waves
         uint8_t  i = beatsin8(27, borderWidth, MATRIX_HEIGHT - borderWidth);
@@ -77,7 +66,6 @@ public:
         effects->leds[effects->XY(ni, j) ] += effects->XY(ni, j) == NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 41);
 
         matrix->paint();
-
         return 0;
     }
 };

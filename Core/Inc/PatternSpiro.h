@@ -19,13 +19,12 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
-#include "matrix.h"
-
 #ifndef PatternSpiro_H
+#define PatternSpiro_H
+#include "Drawable.h"
 
 class PatternSpiro : public Drawable {
-  private:
+private:
     byte theta1 = 0;
     byte theta2 = 0;
     byte hueoffset = 0;
@@ -43,86 +42,87 @@ class PatternSpiro : public Drawable {
 
     boolean handledChange = false;
 
-  public:
-    PatternSpiro() {
-      name = (char *)"Spiro";
+public:
+    PatternSpiro(Effects *effects) : Drawable(effects) {
+        name = (char *)"Spiro";
     }
 
     unsigned int drawFrame() {
-      effects->DimAll(254);
+        Matrix *matrix = effects->getMatrix();
+        effects->DimAll(254);
 
-      boolean change = false;
-      
-      for (int i = 0; i < spirocount; i++) {
-        uint8_t x = mapsin8(theta1 + i * spirooffset, minx, maxx);
-        uint8_t y = mapcos8(theta1 + i * spirooffset, miny, maxy);
+        boolean change = false;
 
-        uint8_t x2 = mapsin8(theta2 + i * spirooffset, x - radiusx, x + radiusx);
-        uint8_t y2 = mapcos8(theta2 + i * spirooffset, y - radiusy, y + radiusy);
+        for (int i = 0; i < spirocount; i++) {
+            uint8_t x = mapsin8(theta1 + i * spirooffset, minx, maxx);
+            uint8_t y = mapcos8(theta1 + i * spirooffset, miny, maxy);
 
-        // Calling Colorfromcurrentpalette breaks the pattern in that it stops half way into a ball
-        CRGB color = effects->ColorFromCurrentPalette(hueoffset + i * spirooffset, 255);
-        //uint32_t color = Wheel(hueoffset + i * spirooffset);
-        //effects.leds[XY(x2, y2)] += color;
-	// Some coordinates are off screen, using drawpixel avoids the artifact of overwriting pixel0
-        matrix->drawPixel(x2, y2, color);
-	// On bigger displays, make the dot faster
-	if (MATRIX_WIDTH>32) {
-	    matrix->drawPixel(x2-1, y2-0, color);
-	    matrix->drawPixel(x2-1, y2-1, color);
-	    matrix->drawPixel(x2-0, y2-1, color);
-	    
-	    matrix->drawPixel(x2-1, y2+1, color);
-	    matrix->drawPixel(x2+1, y2-1, color);
+            uint8_t x2 = mapsin8(theta2 + i * spirooffset, x - radiusx, x + radiusx);
+            uint8_t y2 = mapcos8(theta2 + i * spirooffset, y - radiusy, y + radiusy);
 
-	    matrix->drawPixel(x2+1, y2+0, color);
-	    matrix->drawPixel(x2+1, y2+1, color);
-	    matrix->drawPixel(x2+0, y2+1, color);
-	}
+            // Calling Colorfromcurrentpalette breaks the pattern in that it stops half way into a ball
+            CRGB color = effects->ColorFromCurrentPalette(hueoffset + i * spirooffset, 255);
+            //uint32_t color = Wheel(hueoffset + i * spirooffset);
+            //effects.leds[XY(x2, y2)] += color;
+            // Some coordinates are off screen, using drawpixel avoids the artifact of overwriting pixel0
+            matrix->drawPixel(x2, y2, color);
+            // On bigger displays, make the dot faster
+            if (MATRIX_WIDTH>32) {
+                matrix->drawPixel(x2-1, y2-0, color);
+                matrix->drawPixel(x2-1, y2-1, color);
+                matrix->drawPixel(x2-0, y2-1, color);
 
-        if((x2 == MATRIX_CENTER_X && y2 == MATRIX_CENTER_Y) ||
-           (x2 == MATRIX_CENTRE_X && y2 == MATRIX_CENTRE_Y)) change = true;
-      }
+                matrix->drawPixel(x2-1, y2+1, color);
+                matrix->drawPixel(x2+1, y2-1, color);
 
-      theta2 += 1;
+                matrix->drawPixel(x2+1, y2+0, color);
+                matrix->drawPixel(x2+1, y2+1, color);
+                matrix->drawPixel(x2+0, y2+1, color);
+            }
 
-      EVERY_N_MILLIS(25) {
-        theta1 += 1;
-      }
-
-      EVERY_N_MILLIS(100) {
-        if (change && !handledChange) {
-          handledChange = true;
-          
-          if (spirocount >= MATRIX_WIDTH || spirocount == 1) spiroincrement = !spiroincrement;
-
-          if (spiroincrement) {
-            if(spirocount >= 4)
-              spirocount *= 2;
-            else
-              spirocount += 1;
-          }
-          else {
-            if(spirocount > 4)
-              spirocount /= 2;
-            else
-              spirocount -= 1;
-          }
-
-          spirooffset = 256 / spirocount;
+            if((x2 == MATRIX_CENTER_X && y2 == MATRIX_CENTER_Y) ||
+                    (x2 == MATRIX_CENTRE_X && y2 == MATRIX_CENTRE_Y)) change = true;
         }
-        
-        if(!change) handledChange = false;
-      }
 
-      EVERY_N_MILLIS(33) {
-        hueoffset += 1;
-      }
+        theta2 += 1;
 
-      matrix->paint();
+        EVERY_N_MILLIS(25) {
+            theta1 += 1;
+        }
+
+        EVERY_N_MILLIS(100) {
+            if (change && !handledChange) {
+                handledChange = true;
+
+                if (spirocount >= MATRIX_WIDTH || spirocount == 1) spiroincrement = !spiroincrement;
+
+                if (spiroincrement) {
+                    if(spirocount >= 4)
+                        spirocount *= 2;
+                    else
+                        spirocount += 1;
+                }
+                else {
+                    if(spirocount > 4)
+                        spirocount /= 2;
+                    else
+                        spirocount -= 1;
+                }
+
+                spirooffset = 256 / spirocount;
+            }
+
+            if(!change) handledChange = false;
+        }
+
+        EVERY_N_MILLIS(33) {
+            hueoffset += 1;
+        }
+
+        matrix->paint();
 
 
-      return 0;
+        return 0;
     }
 };
 

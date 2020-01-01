@@ -19,10 +19,9 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
 #ifndef PatternRadar_H
-
-#include "matrix.h"
+#define PatternRadar_H
+#include "Drawable.h"
 
 class PatternRadar : public Drawable {
 private:
@@ -30,11 +29,12 @@ private:
     byte hueoffset = 0;
 
 public:
-    PatternRadar() {
+    PatternRadar(Effects *effects) : Drawable(effects) {
         name = (char *)"Radar";
     }
 
     unsigned int drawFrame() {
+        Matrix *matrix = effects->getMatrix();
         if (MATRIX_WIDTH < 25) {
             effects->DimAll(252);
         } else {

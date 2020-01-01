@@ -44,7 +44,7 @@
 
 
 class Effects {
-
+    Matrix *matrix;
     static const int paletteCount = 10;
     int paletteIndex = -1;
     TBlendType currentBlendType = LINEARBLEND;
@@ -70,7 +70,9 @@ class Effects {
 public:
     CRGB *leds;
 
-    Effects();
+    Effects(Matrix *matrix);
+
+    Matrix *getMatrix(){ return matrix; }
 
     void CircleStream(uint8_t value);
 
@@ -78,7 +80,6 @@ public:
     static const int HeatColorsPaletteIndex = 6;
     static const int RandomPaletteIndex = 9;
 
-    void Setup(CRGB *buffer);
     void CyclePalette(int offset = 1);
     void RandomPalette();
     void loadPalette(int index);

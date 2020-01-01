@@ -25,10 +25,10 @@
 
 #ifndef PatternSpiral_H
 #define PatternSpiral_H
+#include "Drawable.h"
 
 extern "C" uint32_t HAL_GetTick(void);
 
-#include "matrix.h"
 
 class PatternSpiral : public Drawable {
 private:
@@ -64,7 +64,7 @@ private:
     }
 
 public:
-    PatternSpiral() {
+    PatternSpiral(Effects *effects) : Drawable(effects) {
         name = (char *)"Spiral";
     }
 
@@ -112,15 +112,15 @@ public:
         UpdateTimers();
 
         // draw just a line defined by 5 oszillators
-	// this works -- merlin
+        // this works -- merlin
         effects->BresenhamLine(
-            multiTimer[3].count,  // x1
-            multiTimer[4].count,  // y1
-            multiTimer[0].count,  // x2
-            multiTimer[1].count,  // y2
-            multiTimer[2].count); // color
+                multiTimer[3].count,  // x1
+                multiTimer[4].count,  // y1
+                multiTimer[0].count,  // x2
+                multiTimer[1].count,  // y2
+                multiTimer[2].count); // color
 
-	// this doesn't work -- merlin
+        // this doesn't work -- merlin
         // manipulate the screen buffer
         // with fixed parameters (could be oszillators too)
         // center x, y, radius, scale color down
@@ -134,8 +134,8 @@ public:
         // increase the contrast
         effects->DimAll(224);
 
+        Matrix *matrix = effects->getMatrix();
         matrix->paint();
-
         return 0;
     }
 };

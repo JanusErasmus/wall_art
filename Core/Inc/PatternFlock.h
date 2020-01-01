@@ -32,15 +32,14 @@
 // See: http://www.red3d.com/cwr/
 // Rules: Cohesion, Separation, Alignment
 
-#include "matrix.h"
-
 #ifndef PatternFlock_H
 #define PatternFlock_H
+#include "Drawable.h"
 
 class PatternFlock : public Drawable {
-  public:
-    PatternFlock() {
-      name = (char *)"Flock";
+public:
+    PatternFlock(Effects *effects) : Drawable(effects) {
+        name = (char *)"Flock";
     }
 
     static const int boidCount = mmin(MATRIX_WIDTH/3, AVAILABLE_BOID_COUNT);
@@ -51,82 +50,82 @@ class PatternFlock : public Drawable {
     bool predatorPresent = true;
 
     void start() {
-      for (int i = 0; i < boidCount; i++) {
-        boids[i] = Boid(MATRIX_CENTRE_X, MATRIX_CENTRE_Y);
-        boids[i].maxspeed = 0.380;
-        boids[i].maxforce = 0.015;
-      printf("boid[%d] (%d, %d)\n", i, (int)boids[i].location.x, (int)boids[i].location.y);
-      }
+        for (int i = 0; i < boidCount; i++) {
+            boids[i] = Boid(MATRIX_CENTRE_X, MATRIX_CENTRE_Y);
+            boids[i].maxspeed = 0.380;
+            boids[i].maxforce = 0.015;
+            //printf("boid[%d] (%d, %d)\n", i, (int)boids[i].location.x, (int)boids[i].location.y);
+        }
 
 
-      predator = Boid(MATRIX_CENTER_X / 2, MATRIX_CENTER_Y / 2);
-      predatorPresent = true;
-      predator.maxspeed = 0.385;
-      predator.maxforce = 0.020;
-      predator.neighbordist = 16.0;
-      predator.desiredseparation = 0.0;
+        predator = Boid(MATRIX_CENTER_X / 2, MATRIX_CENTER_Y / 2);
+        predatorPresent = true;
+        predator.maxspeed = 0.385;
+        predator.maxforce = 0.020;
+        predator.neighbordist = 16.0;
+        predator.desiredseparation = 0.0;
     }
 
-    unsigned int drawFrame(){
+    unsigned int drawFrame() {
+        Matrix *matrix = effects->getMatrix();
+        effects->DimAll(230);
 
-      effects->DimAll(230);
+        bool applyWind = (random() % 255) > 128;
+        if (applyWind) {
+            wind.x = Boid::randomf() * .015;
+            wind.y = Boid::randomf() * .015;
+        }
 
-      bool applyWind = (random() % 255) > 128;
-      if (applyWind) {
-        wind.x = Boid::randomf() * .015;
-        wind.y = Boid::randomf() * .015;
-      }
+        CRGB color = effects->ColorFromCurrentPalette(hue);
 
-      CRGB color = effects->ColorFromCurrentPalette(hue);
+        for (int i = 0; i < boidCount; i++)
+        {
+            Boid * boid = &boids[i];
 
-      for (int i = 0; i < boidCount; i++)
-      {
-        Boid * boid = &boids[i];
+            if (predatorPresent) {
+                // flee from predator
+                boid->repelForce(predator.location, 10);
+            }
+
+            boid->run(boids, boidCount);
+            boid->wrapAroundBorders();
+            //boid->avoidBorders();
+            PVector location = boid->location;
+            // PVector velocity = boid->velocity;
+            // backgroundLayer.drawLine(location.x, location.y, location.x - velocity.x, location.y - velocity.y, color);
+            // effects.leds[XY(location.x, location.y)] += color;
+            //backgroundLayer.drawPixel(location.x, location.y, color);
+            matrix->drawPixel(location.x, location.y, color);
+
+            if (applyWind) {
+                boid->applyForce(wind);
+                applyWind = false;
+            }
+        }
 
         if (predatorPresent) {
-          // flee from predator
-          boid->repelForce(predator.location, 10);
+            predator.run(boids, boidCount);
+            predator.wrapAroundBorders();
+            //predator.avoidBorders();
+            color = effects->ColorFromCurrentPalette(hue + 128);
+            PVector location = predator.location;
+
+            // PVector velocity = predator.velocity;
+            // backgroundLayer.drawLine(location.x, location.y, location.x - velocity.x, location.y - velocity.y, color);
+            // effects.leds[XY(location.x, location.y)] += color;
+            //backgroundLayer.drawPixel(location.x, location.y, color);
+            matrix->drawPixel(location.x, location.y, color);
         }
 
-        boid->run(boids, boidCount);
-        boid->wrapAroundBorders();
-        //boid->avoidBorders();
-        PVector location = boid->location;
-        // PVector velocity = boid->velocity;
-        // backgroundLayer.drawLine(location.x, location.y, location.x - velocity.x, location.y - velocity.y, color);
-        // effects.leds[XY(location.x, location.y)] += color;
-        //backgroundLayer.drawPixel(location.x, location.y, color);
-        matrix->drawPixel(location.x, location.y, color);
-
-        if (applyWind) {
-          boid->applyForce(wind);
-          applyWind = false;
+        static int tick = 0;
+        if(tick++ > 20)
+        {
+            tick = 0;
+            hue++;
         }
-      }
 
-      if (predatorPresent) {
-        predator.run(boids, boidCount);
-        predator.wrapAroundBorders();
-        //predator.avoidBorders();
-        color = effects->ColorFromCurrentPalette(hue + 128);
-        PVector location = predator.location;
-        // PVector velocity = predator.velocity;
-        // backgroundLayer.drawLine(location.x, location.y, location.x - velocity.x, location.y - velocity.y, color);
-        // effects.leds[XY(location.x, location.y)] += color;        
-        //backgroundLayer.drawPixel(location.x, location.y, color);
-        matrix->drawPixel(location.x, location.y, color);
-      }
-
-      static int tick = 0;
-      if(tick++ > 20)
-      {
-          tick = 0;
-        hue++;
-      }
-
-      matrix->paint();
-
-      return 0;
+        matrix->paint();
+        return 0;
     }
 };
 

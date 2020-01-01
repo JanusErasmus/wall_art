@@ -1,7 +1,4 @@
 #include "Effects.h"
-Effects *effects;
-
-
 #include "hsv2rgb.h"
 #include "noise.h"
 
@@ -23,6 +20,16 @@ const CRGBPalette16 palettes[] = {
         PartyColors_p,
         HeatColors_p
 };
+
+Effects::Effects(Matrix *matrix)
+{
+    this->matrix = matrix;
+    leds = matrix->getBuffer();
+    currentPalette = ForestColors_p;//HeatColors_p;//LavaColors_p;// OceanColors_p;//CloudColors_p;//setupGrayscalePalette();//setupIcePalette();//RainbowColors_p;//RainbowStripeColors_p; //PartyColors_p;setupIcePalette
+    //ShowFrame();
+    //loadPalette(0);
+    NoiseVariablesSetup();
+}
 
 void Effects::drawForegroundHLine(int16_t x0, int16_t x1, int16_t y) {
     // make sure line goes from x0 to x1
@@ -70,10 +77,6 @@ uint16_t Effects::XY( uint8_t x, uint8_t y)
 }
 
 
-Effects::Effects()
-{
-}
-
 void Effects::CircleStream(uint8_t value) {
 
     // Sigh, 3rd array taking memory, convert to malloc?
@@ -108,14 +111,6 @@ void Effects::CircleStream(uint8_t value) {
             leds2[xy].nscale8(value);
         }
     }
-}
-
-void Effects::Setup(CRGB *buffer) {
-    leds = buffer;
-    currentPalette = HeatColors_p;//LavaColors_p;//ForestColors_p;// OceanColors_p;//CloudColors_p;//setupGrayscalePalette();//setupIcePalette();//RainbowColors_p;//RainbowStripeColors_p; //PartyColors_p;setupIcePalette
-    //ShowFrame();
-    //loadPalette(0);
-    NoiseVariablesSetup();
 }
 
 void Effects::CyclePalette(int offset) {

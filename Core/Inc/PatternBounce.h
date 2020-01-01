@@ -21,12 +21,11 @@
  */
 
 #ifndef PatternBounce_H
+#define PatternBounce_H
 
-#include "matrix.h"
+#include "Drawable.h"
 #include "Boid.h"
 #include "colorutils.h"
-#include "Effects.h"
-extern Effects *effects;
 
 class PatternBounce : public Drawable {
 private:
@@ -34,7 +33,7 @@ private:
     PVector gravity = PVector(0, 0.0125);
 
 public:
-    PatternBounce() {
+    PatternBounce(Effects *effects) : Drawable(effects) {
         name = (char *)"Bounce";
     }
 
@@ -42,7 +41,7 @@ public:
         unsigned int colorWidth = 256 / count;
         for (int i = 0; i < count; i++) {
             //Boid boid = Boid(i, 0);
-	    Boid boid = Boid(i, 0);
+            Boid boid = Boid(i, 0);
             boid.velocity.x = 0;// 0.02;
             boid.velocity.y = i * -0.01;
             boid.colorIndex = colorWidth * i;
@@ -57,9 +56,10 @@ public:
         if(!effects)
             return 0;
 
+        Matrix *matrix = effects->getMatrix();
+
         // dim all pixels on the display
         effects->DimAll(230);
-        //matrix->clear();
 
         for (int i = 0; i < count; i++)
         {
@@ -99,7 +99,6 @@ public:
         }
 
         matrix->paint();
-
         return 15;
     }
 };

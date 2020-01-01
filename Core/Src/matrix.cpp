@@ -2,8 +2,6 @@
 #include "ws2812.h"
 #include <math.h>
 
-Matrix *matrix = 0;
-
 
 Matrix::Matrix() : Adafruit_GFX(16, 16)
 {

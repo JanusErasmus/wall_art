@@ -21,8 +21,9 @@
  */
 
 #ifndef PatternAttract_H
+#define PatternAttract_H
 
-#include "matrix.h"
+#include "Drawable.h"
 #include "Attractor.h"
 
 class PatternAttract : public Drawable {
@@ -31,7 +32,7 @@ private:
     Attractor attractor;
 
 public:
-    PatternAttract() {
+    PatternAttract(Effects *effects) : Drawable(effects) {
         name = (char *)"Attract";
     }
 
@@ -41,20 +42,22 @@ public:
             direction = -1;
 
         for (int i = 0; i < count; i++) {
-	    Boid boid = Boid(MATRIX_CENTER_X - 1, (MATRIX_HEIGHT - 1) - i);
+            Boid boid = Boid(MATRIX_CENTER_X - 1, (MATRIX_HEIGHT - 1) - i);
             boid.mass = 1; // random(0.1, 2);
-	    // boid.velocity.x = ((float) random(40, 50)) / 100.0;
+            // boid.velocity.x = ((float) random(40, 50)) / 100.0;
             boid.velocity.x = ((float) (random() % 60) + 20) / 100.0;
             boid.velocity.x *= direction;
             boid.velocity.y = 0;
             //boid.colorIndex = i * 32;
-	    boid.colorIndex = i * (240 / count);
+            boid.colorIndex = i * (240 / count);
             boids[i] = boid;
             //dim = random(170, 250);
         }
     }
 
     unsigned int drawFrame() {
+        Matrix *matrix = effects->getMatrix();
+
         // dim all pixels on the display
         uint8_t dim = beatsin8(2, 170, 250);
         effects->DimAll(dim);
@@ -66,24 +69,14 @@ public:
             boid.applyForce(force);
 
             boid.update();
-	    // backgroundLayer.drawPixel(boid.location.x, boid.location.y, effects.ColorFromCurrentPalette(boid.colorIndex));
-	    // this writes an out of bounds pixel that looks bad
-            //effects.leds[XY(boid.location.x, boid.location.y)] = effects.ColorFromCurrentPalette(boid.colorIndex);
-	    // drawPixel takes care of it
-	    
-	    // drawPixel now accepts native CRGB
-	    CRGB color = effects->ColorFromCurrentPalette(boid.colorIndex);
-            matrix->drawPixel(boid.location.x, boid.location.y, color);
 
-	    // drawPixel also takes 32bit 0x00RRGGBB (in addition to 16bit RGB565)
-	    //uint32_t color32 = color.r*65536+color.g*256+color.b;
-            //matrix->drawPixel(boid.location.x, boid.location.y, color32);
+            CRGB color = effects->ColorFromCurrentPalette(boid.colorIndex);
+            matrix->drawPixel(boid.location.x, boid.location.y, color);
 
             boids[i] = boid;
         }
 
         matrix->paint();
-
         return 15;
     }
 };

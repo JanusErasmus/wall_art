@@ -22,10 +22,16 @@
 
 #ifndef Drawable_H
 #define Drawable_H
+#include "Effects.h"
 
 class Drawable{
+protected:
+    Effects *effects;
+
 public:
     char* name;
+
+    Drawable(Effects *effects){ this->effects = effects; }
 
     virtual bool isRunnable() {
         return false;

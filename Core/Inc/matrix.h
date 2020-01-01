@@ -6,7 +6,6 @@
 #define matrix_h
 
 #include "Adafruit_GFX.h"
-#include "Drawable.h"
 #include "pixeltypes.h"
 
 #define MATRIX_WIDTH 16
@@ -51,8 +50,6 @@ public:
     void setPassThruColor(){}
     uint16_t XY(int x, int y){ return x + y * MATRIX_WIDTH; }
 };
-
-extern Matrix *matrix;
 
 #endif
 
