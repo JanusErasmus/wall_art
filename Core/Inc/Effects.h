@@ -31,7 +31,7 @@
 #include <Utils/utils.h>
 
 #include "matrix.h"
-#include "colorpalettes.h"
+#include "colorutils.h"
 
 
 #define MAX_COLOR_VALUE 255
@@ -46,10 +46,9 @@
 class Effects {
     Matrix *matrix;
     static const int paletteCount = 10;
-    int paletteIndex = -1;
     TBlendType currentBlendType = LINEARBLEND;
-    CRGBPalette16 currentPalette;
-    CRGBPalette16 targetPalette;
+    int paletteIndex;
+    const CRGBPalette16 *currentPalette;
     char* currentPaletteName;
 
 
@@ -80,10 +79,9 @@ public:
     static const int HeatColorsPaletteIndex = 6;
     static const int RandomPaletteIndex = 9;
 
-    void CyclePalette(int offset = 1);
+    void CyclePalette();
     void RandomPalette();
     void loadPalette(int index);
-    void setPalette(/*String paletteName*/);
     void setupGrayscalePalette();
     void setupIcePalette();
 
@@ -95,7 +93,7 @@ public:
     // Oscillators and Emitters
     // set the speeds (and by that ratios) of the oscillators here
     void MoveOscillators();
-    void ShowFrame();
+
     // scale the brightness of the frame buffer down
     void DimAll(byte value);
 

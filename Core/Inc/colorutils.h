@@ -445,11 +445,11 @@ typedef const TDynamicRGBGradientPalette_byte *TDynamicRGBGradientPalette_bytes;
 typedef TDynamicRGBGradientPalette_bytes TDynamicRGBGradientPalettePtr;
 
 // Convert a 16-entry palette to a 256-entry palette
-void UpscalePalette(const struct CRGBPalette16& srcpal16, struct CRGBPalette256& destpal256);
+void UpscalePalette(const struct CRGBPalette16 *srcpal16, struct CRGBPalette256& destpal256);
 void UpscalePalette(const struct CHSVPalette16& srcpal16, struct CHSVPalette256& destpal256);
 
 // Convert a 16-entry palette to a 32-entry palette
-void UpscalePalette(const struct CRGBPalette16& srcpal16, struct CRGBPalette32& destpal32);
+void UpscalePalette(const struct CRGBPalette16 &srcpal16, struct CRGBPalette32& destpal32);
 void UpscalePalette(const struct CHSVPalette16& srcpal16, struct CHSVPalette32& destpal32);
 
 // Convert a 32-entry palette to a 256-entry palette
@@ -1532,7 +1532,7 @@ public:
 
 typedef enum { NOBLEND=0, LINEARBLEND=1 } TBlendType;
 
-CRGB ColorFromPalette( const CRGBPalette16& pal,
+CRGB ColorFromPalette( const CRGBPalette16 *pal,
                       uint8_t index,
                       uint8_t brightness=255,
                       TBlendType blendType=LINEARBLEND);

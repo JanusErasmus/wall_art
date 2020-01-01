@@ -500,57 +500,48 @@ inline uint8_t lsrX4( uint8_t dividend)
 }
 
 
-CRGB ColorFromPalette( const CRGBPalette16& pal, uint8_t index, uint8_t brightness, TBlendType blendType)
+CRGB ColorFromPalette( const CRGBPalette16 *pal, uint8_t index, uint8_t brightness, TBlendType blendType)
 {
-    //      hi4 = index >> 4;
-    uint8_t hi4 = lsrX4(index);
-    uint8_t lo4 = index & 0x0F;
-    
-    // const CRGB* entry = &(pal[0]) + hi4;
-    // since hi4 is always 0..15, hi4 * sizeof(CRGB) can be a single-byte value,
-    // instead of the two byte 'int' that avr-gcc defaults to.
-    // So, we multiply hi4 X sizeof(CRGB), giving hi4XsizeofCRGB;
-    uint8_t hi4XsizeofCRGB = hi4 * sizeof(CRGB);
     // We then add that to a base array pointer.
-    const CRGB* entry = (CRGB*)( (uint8_t*)(&(pal[0])) + hi4XsizeofCRGB);
+    int lower = index >> 4;
+    CRGB entry = pal->entries[lower];
+
+    bool blend = (index & 0x0F) && (blendType != NOBLEND);
     
-    uint8_t blend = lo4 && (blendType != NOBLEND);
-    
-    uint8_t red1   = entry->red;
-    uint8_t green1 = entry->green;
-    uint8_t blue1  = entry->blue;
-    
+    uint8_t red1   = entry.red;
+    uint8_t green1 = entry.green;
+    uint8_t blue1  = entry.blue;
     
     if( blend ) {
-        
-        if( hi4 == 15 ) {
-            entry = &(pal[0]);
+
+        if(lower == 15 ) {
+            entry = pal->entries[0];
         } else {
-            entry++;
+            entry = pal->entries[lower + 1];
         }
-        
-        uint8_t f2 = lo4 << 4;
+
+        uint8_t f2 = (index & 0xF) << 4;
         uint8_t f1 = 255 - f2;
-        
+
         //    rgb1.nscale8(f1);
-        uint8_t red2   = entry->red;
+        uint8_t red2   = entry.red;
         red1   = scale8_LEAVING_R1_DIRTY( red1,   f1);
         red2   = scale8_LEAVING_R1_DIRTY( red2,   f2);
         red1   += red2;
 
-        uint8_t green2 = entry->green;
+        uint8_t green2 = entry.green;
         green1 = scale8_LEAVING_R1_DIRTY( green1, f1);
         green2 = scale8_LEAVING_R1_DIRTY( green2, f2);
         green1 += green2;
 
-        uint8_t blue2  = entry->blue;
+        uint8_t blue2  = entry.blue;
         blue1  = scale8_LEAVING_R1_DIRTY( blue1,  f1);
         blue2  = scale8_LEAVING_R1_DIRTY( blue2,  f2);
         blue1  += blue2;
-        
+
         cleanup_R1();
     }
-    
+
     if( brightness != 255) {
         if( brightness ) {
             brightness++; // adjust for rounding
@@ -1045,7 +1036,7 @@ CHSV ColorFromPalette( const struct CHSVPalette256& pal, uint8_t index, uint8_t 
 }
 
 
-void UpscalePalette(const struct CRGBPalette16& srcpal16, struct CRGBPalette256& destpal256)
+void UpscalePalette(const struct CRGBPalette16 *srcpal16, struct CRGBPalette256& destpal256)
 {
     for( int i = 0; i < 256; i++) {
         destpal256[(uint8_t)(i)] = ColorFromPalette( srcpal16, i);

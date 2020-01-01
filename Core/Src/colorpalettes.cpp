@@ -11,8 +11,8 @@
 // use each one, so you only 'pay for' those you actually use.
 
 
-extern const TProgmemRGBPalette16 CloudColors_p FL_PROGMEM =
-{
+const CRGBPalette16 CloudColors_p =
+        CRGBPalette16(
     CRGB::Blue,
     CRGB::DarkBlue,
     CRGB::DarkBlue,
@@ -32,10 +32,10 @@ extern const TProgmemRGBPalette16 CloudColors_p FL_PROGMEM =
     CRGB::White,
     CRGB::LightBlue,
     CRGB::SkyBlue
-};
+);
 
-extern const TProgmemRGBPalette16 LavaColors_p FL_PROGMEM =
-{
+const CRGBPalette16 LavaColors_p =
+        CRGBPalette16(
     CRGB::Black,
     CRGB::Maroon,
     CRGB::Black,
@@ -43,6 +43,7 @@ extern const TProgmemRGBPalette16 LavaColors_p FL_PROGMEM =
 
     CRGB::DarkRed,
     CRGB::Maroon,
+    CRGB::DarkRed,
     CRGB::DarkRed,
 
     CRGB::DarkRed,
@@ -54,11 +55,11 @@ extern const TProgmemRGBPalette16 LavaColors_p FL_PROGMEM =
     CRGB::Orange,
     CRGB::Red,
     CRGB::DarkRed
-};
+);
 
 
-extern const TProgmemRGBPalette16 OceanColors_p FL_PROGMEM =
-{
+const CRGBPalette16 OceanColors_p =
+        CRGBPalette16(
     CRGB::MidnightBlue,
     CRGB::DarkBlue,
     CRGB::MidnightBlue,
@@ -78,10 +79,10 @@ extern const TProgmemRGBPalette16 OceanColors_p FL_PROGMEM =
     CRGB::SeaGreen,
     CRGB::Aqua,
     CRGB::LightSkyBlue
-};
+);
 
-extern const TProgmemRGBPalette16 ForestColors_p FL_PROGMEM =
-{
+const CRGBPalette16 ForestColors_p =
+        CRGBPalette16(
     CRGB::DarkGreen,
     CRGB::DarkGreen,
     CRGB::DarkOliveGreen,
@@ -101,38 +102,37 @@ extern const TProgmemRGBPalette16 ForestColors_p FL_PROGMEM =
     CRGB::LawnGreen,
     CRGB::MediumAquamarine,
     CRGB::ForestGreen
-};
+);
 
 /// HSV Rainbow
-extern const TProgmemRGBPalette16 RainbowColors_p FL_PROGMEM =
-{
-    0xFF0000, 0xD52A00, 0xAB5500, 0xAB7F00,
-    0xABAB00, 0x56D500, 0x00FF00, 0x00D52A,
-    0x00AB55, 0x0056AA, 0x0000FF, 0x2A00D5,
-    0x5500AB, 0x7F0081, 0xAB0055, 0xD5002B
-};
+const CRGBPalette16 RainbowColors_p =
+        CRGBPalette16(
+    CRGB(0xFF0000), CRGB(0xD52A00), CRGB(0xAB5500), CRGB(0xAB7F00),
+    CRGB(0xABAB00), CRGB(0x56D500), CRGB(0x00FF00), CRGB(0x00D52A),
+    CRGB(0x00AB55), CRGB(0x0056AA), CRGB(0x0000FF), CRGB(0x2A00D5),
+    CRGB(0x5500AB), CRGB(0x7F0081), CRGB(0xAB0055), CRGB(0xD5002B)
+);
 
 /// HSV Rainbow colors with alternatating stripes of black
-#define RainbowStripesColors_p RainbowStripeColors_p
-extern const TProgmemRGBPalette16 RainbowStripeColors_p FL_PROGMEM =
-{
-    0xFF0000, 0x000000, 0xAB5500, 0x000000,
-    0xABAB00, 0x000000, 0x00FF00, 0x000000,
-    0x00AB55, 0x000000, 0x0000FF, 0x000000,
-    0x5500AB, 0x000000, 0xAB0055, 0x000000
-};
+const CRGBPalette16 RainbowStripeColors_p =
+        CRGBPalette16(
+    CRGB(0xFF0000), CRGB(0x000000), CRGB(0xAB5500), CRGB(0x000000),
+    CRGB(0xABAB00), CRGB(0x000000), CRGB(0x00FF00), CRGB(0x000000),
+    CRGB(0x00AB55), CRGB(0x000000), CRGB(0x0000FF), CRGB(0x000000),
+    CRGB(0x5500AB), CRGB(0x000000), CRGB(0xAB0055), CRGB(0x000000)
+);
 
 /// HSV color ramp: blue purple ping red orange yellow (and back)
 /// Basically, everything but the greens, which tend to make
 /// people's skin look unhealthy.  This palette is good for
 /// lighting at a club or party, where it'll be shining on people.
-extern const TProgmemRGBPalette16 PartyColors_p FL_PROGMEM =
-{
-    0x5500AB, 0x84007C, 0xB5004B, 0xE5001B,
-    0xE81700, 0xB84700, 0xAB7700, 0xABAB00,
-    0xAB5500, 0xDD2200, 0xF2000E, 0xC2003E,
-    0x8F0071, 0x5F00A1, 0x2F00D0, 0x0007F9
-};
+const CRGBPalette16 PartyColors_p =
+        CRGBPalette16(
+    CRGB(0x5500AB), CRGB(0x84007C), CRGB(0xB5004B), CRGB(0xE5001B),
+    CRGB(0xE81700), CRGB(0xB84700), CRGB(0xAB7700), CRGB(0xABAB00),
+    CRGB(0xAB5500), CRGB(0xDD2200), CRGB(0xF2000E), CRGB(0xC2003E),
+    CRGB(0x8F0071), CRGB(0x5F00A1), CRGB(0x2F00D0), CRGB(0x0007F9)
+);
 
 /// Approximate "black body radiation" palette, akin to
 /// the FastLED 'HeatColor' function.
@@ -140,13 +140,13 @@ extern const TProgmemRGBPalette16 PartyColors_p FL_PROGMEM =
 /// the usual 0-255, as the last 15 colors will be
 /// 'wrapping around' from the hot end to the cold end,
 /// which looks wrong.
-extern const TProgmemRGBPalette16 HeatColors_p FL_PROGMEM =
-{
-    0x000000,
-    0x330000, 0x660000, 0x990000, 0xCC0000, 0xFF0000,
-    0xFF3300, 0xFF6600, 0xFF9900, 0xFFCC00, 0xFFFF00,
-    0xFFFF33, 0xFFFF66, 0xFFFF99, 0xFFFFCC, 0xFFFFFF
-};
+const CRGBPalette16 HeatColors_p FL_PROGMEM =
+        CRGBPalette16(
+    CRGB(0x000000),
+    CRGB(0x330000), CRGB(0x660000), CRGB(0x990000), CRGB(0xCC0000), CRGB(0xFF0000),
+    CRGB(0xFF3300), CRGB(0xFF6600), CRGB(0xFF9900), CRGB(0xFFCC00), CRGB(0xFFFF00),
+    CRGB(0xFFFF33), CRGB(0xFFFF66), CRGB(0xFFFF99), CRGB(0xFFFFCC), CRGB(0xFFFFFF)
+);
 
 
 // Gradient palette "Rainbow_gp",

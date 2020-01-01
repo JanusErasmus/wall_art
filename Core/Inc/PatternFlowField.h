@@ -37,7 +37,7 @@ public:
     uint16_t speed = 1;
     uint16_t scale = 26;
 
-    static const int count = AVAILABLE_BOID_COUNT;
+    static const int count = 5;
     Boid boids[5];
 
     byte hue = 0;
@@ -48,7 +48,8 @@ public:
         z = random16();
 
         for (int i = 0; i < count; i++) {
-            boids[i] = Boid(random() % MATRIX_WIDTH, random() % MATRIX_HEIGHT);
+            boids[i].location.x = random() % MATRIX_WIDTH;
+            boids[i].location.y = random() % MATRIX_HEIGHT;
         }
     }
 
@@ -59,7 +60,7 @@ public:
         // CRGB color = effects.ColorFromCurrentPalette(hue);
 
         for (int i = 0; i < count; i++) {
-            Boid * boid = &boids[i];
+            Boid *boid = &boids[i];
 
             int ioffset = scale * boid->location.x;
             int joffset = scale * boid->location.y;
@@ -77,7 +78,7 @@ public:
 
             if (boid->location.x < 0 || boid->location.x >= MATRIX_WIDTH ||
                     boid->location.y < 0 || boid->location.y >= MATRIX_HEIGHT) {
-                boid->location.x = random() % MATRIX_WIDTH;
+                boid->location.x = random() % MATRIX_WIDTH - 1;
                 boid->location.y = 0;
             }
         }

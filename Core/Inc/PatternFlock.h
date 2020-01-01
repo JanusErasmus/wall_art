@@ -42,8 +42,8 @@ public:
         name = (char *)"Flock";
     }
 
-    static const int boidCount = mmin(MATRIX_WIDTH/3, AVAILABLE_BOID_COUNT);
-    Boid boids[5];
+    const int boidCount = 7;
+    Boid boids[7];
     Boid predator;
 
     PVector wind;
@@ -52,10 +52,10 @@ public:
 
     void start() {
         for (int i = 0; i < boidCount; i++) {
-            boids[i] = Boid(MATRIX_CENTRE_X, MATRIX_CENTRE_Y);
+            boids[i].location.x = MATRIX_CENTER_X;
+            boids[i].location.y = MATRIX_CENTRE_Y;
             boids[i].maxspeed = 0.380;
             boids[i].maxforce = 0.015;
-            //printf("boid[%d] (%d, %d)\n", i, (int)boids[i].location.x, (int)boids[i].location.y);
         }
 
 

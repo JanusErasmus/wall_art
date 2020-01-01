@@ -29,7 +29,7 @@ protected:
     Effects *effects;
 
 public:
-    char* name;
+    const char* name;
 
     Drawable(Effects *effects){ this->effects = effects; }
 

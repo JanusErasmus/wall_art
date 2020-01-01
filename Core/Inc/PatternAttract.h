@@ -28,8 +28,8 @@
 
 class PatternAttract : public Drawable {
 private:
-    const int count = mmin(MATRIX_HEIGHT/3, AVAILABLE_BOID_COUNT);
-    Boid *boids[AVAILABLE_BOID_COUNT];
+    const int count = 5;
+    Boid *boids[5];
     Attractor attractor;
 
 public:
@@ -54,7 +54,7 @@ public:
         for (int i = 0; i < count; i++) {
             Boid *boid = boids[i];
             boid->location.x = MATRIX_CENTER_X - 1;
-            boid->location.y = MATRIX_CENTER_Y - 1;
+            boid->location.y = (MATRIX_HEIGHT - 1) - i;
             boid->mass = 1; // random(0.1, 2);
             // boid.velocity.x = ((float) random(40, 50)) / 100.0;
             boid->velocity.x = ((float) (random() % 60) + 20) / 100.0;
@@ -83,7 +83,6 @@ public:
 
             CRGB color = effects->ColorFromCurrentPalette(boid->colorIndex);
             matrix->drawPixel(boid->location.x, boid->location.y, color);
-
         }
 
         matrix->paint();

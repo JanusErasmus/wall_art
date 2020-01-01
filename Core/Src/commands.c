@@ -13,6 +13,8 @@
 
 extern RTC_HandleTypeDef hrtc;
 extern void paint(uint8_t argc, char **argv);
+extern void pattern(uint8_t argc, char **argv);
+extern void palette(uint8_t argc, char **argv);
 
 void show_rtc(uint8_t argc, char **argv)
 {
@@ -40,9 +42,11 @@ void show_rtc(uint8_t argc, char **argv)
 const sTermEntry_t rtcEntry =
 { "rtc", "Show RTC time", show_rtc };
 
-
 const sTermEntry_t paintEntry =
-{ "p", "Paint buffer", paint };
+{ "l", "Palette", palette };
+
+const sTermEntry_t paletteEntry =
+{ "p", "Pattern", pattern };
 
 const sTermEntry_t *cli_entries[] =
 {
@@ -51,6 +55,7 @@ const sTermEntry_t *cli_entries[] =
       &rebootEntry,
       &bootEntry,
       &rtcEntry,
+	  &paletteEntry,
 	  &paintEntry,
       0
 };

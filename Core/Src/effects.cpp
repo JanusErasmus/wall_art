@@ -2,34 +2,53 @@
 #include "hsv2rgb.h"
 #include "noise.h"
 
-const CRGBPalette16 WoodFireColors_p = CRGBPalette16(CRGB::Black, CRGB::OrangeRed, CRGB::Orange, CRGB::Gold);            //* Orange
-const CRGBPalette16 SodiumFireColors_p = CRGBPalette16(CRGB::Black, CRGB::Orange, CRGB::Gold, CRGB::Goldenrod);          //* Yellow
-const CRGBPalette16 CopperFireColors_p = CRGBPalette16(CRGB::Black, CRGB::Green, CRGB::GreenYellow, CRGB::LimeGreen);    //* Green
-const CRGBPalette16 AlcoholFireColors_p = CRGBPalette16(CRGB::Black, CRGB::Blue, CRGB::DeepSkyBlue, CRGB::LightSkyBlue); //* Blue
-const CRGBPalette16 RubidiumFireColors_p = CRGBPalette16(CRGB::Black, CRGB::Indigo, CRGB::Indigo, CRGB::DarkBlue);       //* Indigo
-const CRGBPalette16 PotassiumFireColors_p = CRGBPalette16(CRGB::Black, CRGB::Indigo, CRGB::MediumPurple, CRGB::DeepPink);//* Violet
-const CRGBPalette16 LithiumFireColors_p = CRGBPalette16(CRGB::Black, CRGB::FireBrick, CRGB::Pink, CRGB::DeepPink);       //* Red
+extern "C" {
+#include "colorpalettes.h"
+}
 
-const CRGBPalette16 palettes[] = {
-        RainbowColors_p,
-        RainbowStripeColors_p,
-        CloudColors_p,
-        LavaColors_p,
-        OceanColors_p,
-        ForestColors_p,
-        PartyColors_p,
-        HeatColors_p
+const CRGBPalette16 WoodFireColors_p      = CRGBPalette16(CRGB::Black, CRGB::OrangeRed, CRGB::Orange, CRGB::Gold);         //* Orange
+const CRGBPalette16 SodiumFireColors_p    = CRGBPalette16(CRGB::Black, CRGB::Orange, CRGB::Gold, CRGB::Goldenrod);         //* Yellow
+const CRGBPalette16 CopperFireColors_p    = CRGBPalette16(CRGB::Black, CRGB::Green, CRGB::GreenYellow, CRGB::LimeGreen);   //* Green
+const CRGBPalette16 AlcoholFireColors_p   = CRGBPalette16(CRGB::Black, CRGB::Blue, CRGB::DeepSkyBlue, CRGB::LightSkyBlue); //* Blue
+const CRGBPalette16 RubidiumFireColors_p  = CRGBPalette16(CRGB::Black, CRGB::Indigo, CRGB::Indigo, CRGB::DarkBlue);        //* Indigo
+const CRGBPalette16 PotassiumFireColors_p = CRGBPalette16(CRGB::Black, CRGB::Indigo, CRGB::MediumPurple, CRGB::DeepPink);  //* Violet
+const CRGBPalette16 LithiumFireColors_p   = CRGBPalette16(CRGB::Black, CRGB::FireBrick, CRGB::Pink, CRGB::DeepPink);       //* Red
+const CRGBPalette16 IceColors_p           = CRGBPalette16(CRGB::Black, CRGB::Blue, CRGB::Aqua, CRGB::White);const CRGBPalette16 GrayColors_p = CRGBPalette16(CRGB::Black, CRGB::White);
+
+struct pallette_s
+{
+    const char *name;
+    const CRGBPalette16 *palette;
+};
+
+
+const pallette_s palettes[] = {
+        {"Rainbow", &RainbowColors_p},
+        {"RainStripe", &RainbowStripeColors_p},
+        {"Cloud", &CloudColors_p},
+        {"Lava", &LavaColors_p},
+        {"Ocean", &OceanColors_p},
+        {"Forest", &ForestColors_p},
+        {"Party", &PartyColors_p},
+        {"Heat", &HeatColors_p},
+        {"Wood", &WoodFireColors_p},
+        {"Sodium", &SodiumFireColors_p},
+        {"Copper", &CopperFireColors_p},
+        {"Alcohol", &AlcoholFireColors_p},
+        {"Rubidium", &RubidiumFireColors_p},
+        {"Potassium", &PotassiumFireColors_p},
+        {"Lithium", &LithiumFireColors_p},
+        {"Ice", &IceColors_p},
+        {0, 0}
 };
 
 Effects::Effects(Matrix *matrix)
 {
+    paletteIndex = 0;
     this->matrix = matrix;
     leds = matrix->getBuffer();
-    //setupIcePalette();//
-    currentPalette = LavaColors_p;//OceanColors_p;//ForestColors_p;//HeatColors_p;// CloudColors_p;//setupGrayscalePalette();//RainbowColors_p;//RainbowStripeColors_p; //PartyColors_p;setupIcePalette
+    currentPalette = &RainbowColors_p;
 
-    //ShowFrame();
-    //loadPalette(0);
     NoiseVariablesSetup();
 }
 
@@ -115,8 +134,15 @@ void Effects::CircleStream(uint8_t value) {
     }
 }
 
-void Effects::CyclePalette(int offset) {
-    loadPalette(paletteIndex + offset);
+void Effects::CyclePalette() {
+
+    paletteIndex++;
+    if(!palettes[paletteIndex].palette)
+        paletteIndex = 0;
+
+    printf("Palatte[%d] %s\n", paletteIndex, palettes[paletteIndex].name);
+
+    currentPalette = palettes[paletteIndex].palette;
 }
 
 void Effects::RandomPalette() {
@@ -124,129 +150,7 @@ void Effects::RandomPalette() {
 }
 
 void Effects::loadPalette(int index) {
-    paletteIndex = index;
 
-    if (paletteIndex >= paletteCount)
-        paletteIndex = 0;
-    else if (paletteIndex < 0)
-        paletteIndex = paletteCount - 1;
-
-    switch (paletteIndex) {
-    case 0:
-        targetPalette = RainbowColors_p;
-        currentPaletteName = (char *)"Rainbow";
-        break;
-        //case 1:
-        //  targetPalette = RainbowStripeColors_p;
-        //  currentPaletteName = (char *)"RainbowStripe";
-        //  break;
-    case 1:
-        targetPalette = OceanColors_p;
-        currentPaletteName = (char *)"Ocean";
-        break;
-    case 2:
-        targetPalette = CloudColors_p;
-        currentPaletteName = (char *)"Cloud";
-        break;
-    case 3:
-        targetPalette = ForestColors_p;
-        currentPaletteName = (char *)"Forest";
-        break;
-    case 4:
-        targetPalette = PartyColors_p;
-        currentPaletteName = (char *)"Party";
-        break;
-    case 5:
-        setupGrayscalePalette();
-        currentPaletteName = (char *)"Grey";
-        break;
-    case HeatColorsPaletteIndex:
-        targetPalette = HeatColors_p;
-        currentPaletteName = (char *)"Heat";
-        break;
-    case 7:
-        targetPalette = LavaColors_p;
-        currentPaletteName = (char *)"Lava";
-        break;
-    case 8:
-        setupIcePalette();
-        currentPaletteName = (char *)"Ice";
-        break;
-    case RandomPaletteIndex:
-        loadPalette(random() % 8);
-        paletteIndex = RandomPaletteIndex;
-        currentPaletteName = (char *)"Random";
-        break;
-    }
-}
-
-void Effects::setPalette(/*String paletteName*/) {
-
-    //TODO wtf is String
-    //    if (paletteName == "Rainbow")
-    //      loadPalette(0);
-    //    //else if (paletteName == "RainbowStripe")
-    //    //  loadPalette(1);
-    //    else if (paletteName == "Ocean")
-    //      loadPalette(1);
-    //    else if (paletteName == "Cloud")
-    //      loadPalette(2);
-    //    else if (paletteName == "Forest")
-    //      loadPalette(3);
-    //    else if (paletteName == "Party")
-    //      loadPalette(4);
-    //    else if (paletteName == "Grayscale")
-    //      loadPalette(5);
-    //    else if (paletteName == "Heat")
-    //      loadPalette(6);
-    //    else if (paletteName == "Lava")
-    //      loadPalette(7);
-    //    else if (paletteName == "Ice")
-    //      loadPalette(8);
-    //    else if (paletteName == "Random")
-    //      RandomPalette();
-    //  }
-    //
-    //  void listPalettes() {
-    //    Serial.println(F("{"));
-    //    Serial.print(F("  \"count\": "));
-    //    Serial.print(paletteCount);
-    //    Serial.println(",");
-    //    Serial.println(F("  \"results\": ["));
-    //
-    //    String paletteNames [] = {
-    //      "Rainbow",
-    //      // "RainbowStripe",
-    //      "Ocean",
-    //      "Cloud",
-    //      "Forest",
-    //      "Party",
-    //      "Grayscale",
-    //      "Heat",
-    //      "Lava",
-    //      "Ice",
-    //      "Random"
-    //    };
-    //
-    //    for (int i = 0; i < paletteCount; i++) {
-    //      Serial.print(F("    \""));
-    //      Serial.print(paletteNames[i]);
-    //      if (i == paletteCount - 1)
-    //        Serial.println(F("\""));
-    //      else
-    //        Serial.println(F("\","));
-    //    }
-    //
-    //    Serial.println("  ]");
-    //    Serial.println("}");
-}
-
-void Effects::setupGrayscalePalette() {
-    targetPalette = CRGBPalette16(CRGB::Black, CRGB::White);
-}
-
-void Effects::setupIcePalette() {
-    targetPalette = CRGBPalette16(CRGB::Black, CRGB::Blue, CRGB::Aqua, CRGB::White);
 }
 
 // set the speeds (and by that ratios) of the oscillators here
@@ -261,12 +165,6 @@ void Effects::MoveOscillators() {
     for (int i = 0; i < 4; i++) {
         p[i] = map8(sin8(osci[i]), 0, MATRIX_WIDTH - 1); //why? to keep the result in the range of 0-MATRIX_WIDTH (matrix size)
     }
-}
-
-void Effects::ShowFrame() {
-
-    currentPalette = targetPalette;
-
 }
 
 // scale the brightness of the screenbuffer down
@@ -589,6 +487,7 @@ void Effects::Pixel(int x, int y, uint8_t colorIndex) {
 }
 
 CRGB Effects::ColorFromCurrentPalette(uint8_t index, uint8_t brightness, TBlendType blendType) {
+
     return ColorFromPalette(currentPalette, index, brightness, blendType);
 }
 

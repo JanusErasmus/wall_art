@@ -44,21 +44,22 @@ Drawable *patterns[] = {
         //&spiro,
         &wave,
         &radar,
-        &p_wave,
+        //&p_wave,
         &drift,
-        &flow,
+        //&flow,
         &attract,
         //&cube,
         0
 };
 
-int curr_pattern = 0;
+int curr_pattern = 1;
 void setNextPattern()
 {
     curr_pattern++;
     if(!patterns[curr_pattern])
         curr_pattern = 0;
 
+    printf("Starting pattern: %s\n", patterns[curr_pattern]->name);
     patterns[curr_pattern]->start();
 }
 
@@ -89,5 +90,15 @@ void cpp_run()
             HAL_Delay(500);
         }
     }
+}
+
+void pattern(uint8_t argc, char **argv)
+{
+    setNextPattern();
+}
+
+void palette(uint8_t argc, char **argv)
+{
+    effects.CyclePalette();
 }
 }

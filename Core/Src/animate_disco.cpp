@@ -19,6 +19,7 @@ AnimateDisco::AnimateDisco(Effects *effects) : Drawable(effects)
     blue_col = 15;
     blue_delta = 1;
     scale = 1;//0.9;
+    name = "Disco";
 }
 
 AnimateDisco::~AnimateDisco()

@@ -27,12 +27,10 @@
 #include "Boid.h"
 #include "colorutils.h"
 
-#define AVAILABLE_BOID_COUNT 16
-
 class PatternBounce : public Drawable {
 private:
-    static const int count = mmin(MATRIX_WIDTH, AVAILABLE_BOID_COUNT);
-    Boid *boids[AVAILABLE_BOID_COUNT];
+    static const int count = 16;
+    Boid *boids[16];
     PVector gravity = PVector(0, 0.0125);
 
 public:
