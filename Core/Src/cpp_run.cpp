@@ -1,24 +1,23 @@
-#include "animate_disco.h"
-#include "Adafruit_GFX.h"
 #include "ws2812.h"
 
 #include "main.h"
+#include "led_matrix.h"
+#include "Aurora/animate_disco.h"
+#include "Aurora/PatternBounce.h"
+#include "Aurora/PatternFlock.h"
+#include "Aurora/PatternSwirl.h"
+#include "Aurora/PatternSpiral.h"
+#include "Aurora/PatternSpiro.h"
+#include "Aurora/PatternWave.h"
+#include "Aurora/PatternRadar.h"
+#include "Aurora/PatternPendulumWave.h"
+#include "Aurora/PatternIncrementalDrift.h"
+#include "Aurora/PatternFlowField.h"
+#include "Aurora/PatternAttract.h"
+#include "Aurora/PatternCube.h"
+#include "Aurora/Effects.h"
 
-#include "PatternBounce.h"
-#include "PatternFlock.h"
-#include "PatternSwirl.h"
-#include "PatternSpiral.h"
-#include "PatternSpiro.h"
-#include "PatternWave.h"
-#include "PatternRadar.h"
-#include "PatternPendulumWave.h"
-#include "PatternIncrementalDrift.h"
-#include "PatternFlowField.h"
-#include "PatternAttract.h"
-#include "PatternCube.h"
-#include "Effects.h"
-
-Matrix matrix;
+LEDmatrix matrix;
 Effects effects(&matrix);
 
 AnimateDisco disco(&effects);
@@ -36,7 +35,7 @@ PatternAttract attract(&effects);
 PatternCube cube(&effects); //TODO NOT working
 
 Drawable *patterns[] = {
-        &disco,
+        &cube,
         &bounce,
         &flock,
         &swirl,
@@ -48,11 +47,11 @@ Drawable *patterns[] = {
         &drift,
         &flow,
         &attract,
-        &cube,
+        &disco,
         0
 };
 
-int curr_pattern = 1;
+int curr_pattern = 0;
 void setNextPattern()
 {
     curr_pattern++;
