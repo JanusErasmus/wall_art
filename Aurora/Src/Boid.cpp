@@ -1,4 +1,4 @@
-#include "Boid.h"
+#include "Aurora/Boid.h"
 
 #define MATRIX_WIDTH 16
 #define MATRIX_HEIGHT 16
@@ -33,7 +33,7 @@ Boid::~Boid(){
 
 
 
-void Boid::run(Boid boids [], uint8_t boidCount) {
+void Boid::run(Boid *boids, uint8_t boidCount) {
     flock(boids, boidCount);
     update();
     // wrapAroundBorders();
@@ -78,7 +78,7 @@ void Boid::repelForce(PVector obstacle, float radius) {
 }
 
 // We accumulate a new acceleration each time based on three rules
-void Boid::flock(Boid boids [], uint8_t boidCount) {
+void Boid::flock(Boid *boids, uint8_t boidCount) {
     PVector sep = separate(boids, boidCount);   // Separation
     PVector ali = align(boids, boidCount);      // Alignment
     PVector coh = cohesion(boids, boidCount);   // Cohesion
@@ -94,14 +94,12 @@ void Boid::flock(Boid boids [], uint8_t boidCount) {
 
 // Separation
 // Method checks for nearby boids and steers away
-PVector Boid::separate(Boid boids [], uint8_t boidCount) {
+PVector Boid::separate(Boid *boids, uint8_t boidCount) {
     PVector steer = PVector(0, 0);
     int count = 0;
     // For every boid in the system, check if it's too close
     for (int i = 0; i < boidCount; i++) {
         Boid other = boids[i];
-        if (!other.enabled)
-            continue;
         float d = location.dist(other.location);
         // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
         if ((d > 0) && (d < desiredseparation)) {
@@ -131,13 +129,11 @@ PVector Boid::separate(Boid boids [], uint8_t boidCount) {
 
 // Alignment
 // For every nearby boid in the system, calculate the average velocity
-PVector Boid::align(Boid boids [], uint8_t boidCount) {
+PVector Boid::align(Boid *boids, uint8_t boidCount) {
     PVector sum = PVector(0, 0);
     int count = 0;
     for (int i = 0; i < boidCount; i++) {
         Boid other = boids[i];
-        if (!other.enabled)
-            continue;
         float d = location.dist(other.location);
         if ((d > 0) && (d < neighbordist)) {
             sum += other.velocity;
@@ -159,13 +155,11 @@ PVector Boid::align(Boid boids [], uint8_t boidCount) {
 
 // Cohesion
 // For the average location (i.e. center) of all nearby boids, calculate steering vector towards that location
-PVector Boid::cohesion(Boid boids [], uint8_t boidCount) {
+PVector Boid::cohesion(Boid *boids, uint8_t boidCount) {
     PVector sum = PVector(0, 0);   // Start with empty vector to accumulate all locations
     int count = 0;
     for (int i = 0; i < boidCount; i++) {
         Boid other = boids[i];
-        if (!other.enabled)
-            continue;
         float d = location.dist(other.location);
         if ((d > 0) && (d < neighbordist)) {
             sum += other.location; // Add location

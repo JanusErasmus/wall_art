@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "animate_disco.h"
+#include "Aurora/animate_disco.h"
 #include "ws2812.h"
 #include "main.h"
 

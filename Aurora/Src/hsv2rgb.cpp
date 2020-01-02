@@ -1,7 +1,7 @@
 #define FASTLED_INTERNAL
 #include <stdint.h>
 
-#include "pixeltypes.h"
+#include "Aurora/pixeltypes.h"
 
 // Functions to convert HSV colors to RGB colors.
 //

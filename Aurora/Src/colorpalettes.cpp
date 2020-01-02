@@ -1,14 +1,14 @@
+#include "Aurora/colorutils.h"
+#include "Aurora/colorpalettes.h"
 
-#include "colorutils.h"
-#include "colorpalettes.h"
-
-// Preset color schemes, such as they are.
-
-// These schemes are all declared as "PROGMEM", meaning
-// that they won't take up SRAM on AVR chips until used.
-// Furthermore, the compiler won't even include these
-// in your PROGMEM (flash) storage unless you specifically
-// use each one, so you only 'pay for' those you actually use.
+const CRGBPalette16 WoodFireColors_p      = CRGBPalette16(CRGB::Black, CRGB::OrangeRed, CRGB::Orange, CRGB::Gold);         //* Orange
+const CRGBPalette16 SodiumFireColors_p    = CRGBPalette16(CRGB::Black, CRGB::Orange, CRGB::Gold, CRGB::Goldenrod);         //* Yellow
+const CRGBPalette16 CopperFireColors_p    = CRGBPalette16(CRGB::Black, CRGB::Green, CRGB::GreenYellow, CRGB::LimeGreen);   //* Green
+const CRGBPalette16 AlcoholFireColors_p   = CRGBPalette16(CRGB::Black, CRGB::Blue, CRGB::DeepSkyBlue, CRGB::LightSkyBlue); //* Blue
+const CRGBPalette16 RubidiumFireColors_p  = CRGBPalette16(CRGB::Black, CRGB::Indigo, CRGB::Indigo, CRGB::DarkBlue);        //* Indigo
+const CRGBPalette16 PotassiumFireColors_p = CRGBPalette16(CRGB::Black, CRGB::Indigo, CRGB::MediumPurple, CRGB::DeepPink);  //* Violet
+const CRGBPalette16 LithiumFireColors_p   = CRGBPalette16(CRGB::Black, CRGB::FireBrick, CRGB::Pink, CRGB::DeepPink);       //* Red
+const CRGBPalette16 IceColors_p           = CRGBPalette16(CRGB::Black, CRGB::Blue, CRGB::Aqua, CRGB::White);const CRGBPalette16 GrayColors_p = CRGBPalette16(CRGB::Black, CRGB::White);
 
 
 const CRGBPalette16 CloudColors_p =
@@ -147,21 +147,3 @@ const CRGBPalette16 HeatColors_p FL_PROGMEM =
     CRGB(0xFF3300), CRGB(0xFF6600), CRGB(0xFF9900), CRGB(0xFFCC00), CRGB(0xFFFF00),
     CRGB(0xFFFF33), CRGB(0xFFFF66), CRGB(0xFFFF99), CRGB(0xFFFFCC), CRGB(0xFFFFFF)
 );
-
-
-// Gradient palette "Rainbow_gp",
-// provided for situations where you're going
-// to use a number of other gradient palettes, AND
-// you want a 'standard' FastLED rainbow as well.
-
-DEFINE_GRADIENT_PALETTE( Rainbow_gp ) {
-      0,  255,  0,  0, // Red
-     32,  171, 85,  0, // Orange
-     64,  171,171,  0, // Yellow
-     96,    0,255,  0, // Green
-    128,    0,171, 85, // Aqua
-    160,    0,  0,255, // Blue
-    192,   85,  0,171, // Purple
-    224,  171,  0, 85, // Pink
-    255,  255,  0,  0};// and back to Red
-

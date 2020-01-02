@@ -44,6 +44,8 @@ public:
     PVector location;   // Location
 
     Attractor() {
+        int MATRIX_CENTRE_X = (16 / 2) - 1;
+        int MATRIX_CENTRE_Y = (16 / 2) - 1;
         location = PVector(MATRIX_CENTRE_X, MATRIX_CENTRE_Y);
         mass = 10;
         G = .5;

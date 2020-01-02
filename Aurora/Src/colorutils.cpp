@@ -4,8 +4,7 @@
 #include <stdint.h>
 #include <math.h>
 
-#include "colorutils.h"
-
+#include "Aurora/colorutils.h"
 
 void fill_solid( struct CRGB * leds, int numToFill,
                  const struct CRGB& color)
