@@ -201,7 +201,7 @@ void nscale8_raw( CRGB* leds, uint16_t num_leds, uint8_t scale)
 void nscale8( CRGB* leds, uint16_t num_leds, uint8_t scale)
 {
     for( uint16_t i = 0; i < num_leds; i++) {
-        leds[i].nscale8( scale);
+        leds[i].nscale8(scale);
     }
 }
 

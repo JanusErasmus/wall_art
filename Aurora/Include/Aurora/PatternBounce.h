@@ -29,28 +29,24 @@
 
 class PatternBounce : public Drawable {
 private:
-    static const int count = 16;
-    Boid *boids[16];
+    int count = 16;
+    Boid *boids;
     PVector gravity = PVector(0, 0.0125);
 
 public:
-    PatternBounce(Effects *effects) : Drawable(effects) {
+    PatternBounce(Boid *boids) {
         name = (char *)"Bounce";
-        for (int i = 0; i < count; i++) {
-            boids[i] = new Boid();
-        }
+        this->boids = boids;
     }
 
     virtual ~PatternBounce() {
-        for (int i = 0; i < count; i++) {
-            delete boids[i];
-        }
     }
 
-    void start() {
+    void start(Matrix *matrix) {
+        count = matrix->MATRIX_WIDTH;
         unsigned int colorWidth = 256 / count;
         for (int i = 0; i < count; i++) {
-            Boid *boid = boids[i];
+            Boid *boid = &boids[i];
             boid->location.x = i;
             boid->location.y = 0;
             boid->velocity.x = 0;// 0.02;
@@ -61,19 +57,19 @@ public:
         }
     }
 
-    unsigned int drawFrame()
+    unsigned int drawFrame(Effects *effects)
     {
         if(!effects)
             return 0;
 
-        Matrix *matrix = effects->getMatrix();
+        Matrix *matrix = effects->matrix;
 
         // dim all pixels on the display
         effects->DimAll(230);
 
         for (int i = 0; i < count; i++)
         {
-            Boid *boid = boids[i];
+            Boid *boid = &boids[i];
 
             boid->applyForce(gravity);
 
@@ -96,14 +92,14 @@ public:
                 }
             }
 
-            // drawPixel takes care of it
-            matrix->drawPixel(boid->location.x, boid->location.y, color);
 
-            if (boid->location.y >= MATRIX_HEIGHT - 1)
+            if (boid->location.y >= effects->matrix->MATRIX_HEIGHT - 1)
             {
-                boid->location.y = MATRIX_HEIGHT - 1;
+                boid->location.y = matrix->MATRIX_HEIGHT - 1;
                 boid->velocity.y *= -1.0;
             }
+
+            matrix->drawPixel(boid->location.x, boid->location.y, color);
         }
 
         matrix->paint();

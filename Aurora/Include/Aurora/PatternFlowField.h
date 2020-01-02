@@ -26,8 +26,9 @@
 
 class PatternFlowField : public Drawable {
 public:
-    PatternFlowField(Effects *effects) : Drawable(effects) {
+    PatternFlowField(Boid *boids) {
         name = (char *)"FlowField";
+        this->boids = boids;
     }
 
     uint16_t x;
@@ -38,23 +39,24 @@ public:
     uint16_t scale = 26;
 
     static const int count = 5;
-    Boid boids[5];
+    Boid *boids;
 
     byte hue = 0;
 
-    void start() {
+    void start(Matrix *matrix) {
         x = random16();
         y = random16();
         z = random16();
 
         for (int i = 0; i < count; i++) {
-            boids[i].location.x = random() % MATRIX_WIDTH;
-            boids[i].location.y = random() % MATRIX_HEIGHT;
+            Boid *boid = &boids[i];
+            boid->location.x = random() % matrix->MATRIX_WIDTH;
+            boid->location.y = random() % matrix->MATRIX_HEIGHT;
         }
     }
 
-    unsigned int drawFrame() {
-        Matrix *matrix = effects->getMatrix();
+    unsigned int drawFrame(Effects *effects) {
+        Matrix *matrix = effects->matrix;
 
         effects->DimAll(240);
         // CRGB color = effects.ColorFromCurrentPalette(hue);
@@ -76,9 +78,9 @@ public:
             CRGB color = effects->ColorFromCurrentPalette(effects->ColorFromCurrentPalette(angle + hue));
             matrix->drawPixel(boid->location.x, boid->location.y, color);
 
-            if (boid->location.x < 0 || boid->location.x >= MATRIX_WIDTH ||
-                    boid->location.y < 0 || boid->location.y >= MATRIX_HEIGHT) {
-                boid->location.x = random() % MATRIX_WIDTH - 1;
+            if (boid->location.x < 0 || boid->location.x >= matrix->MATRIX_WIDTH ||
+                    boid->location.y < 0 || boid->location.y >= matrix->MATRIX_HEIGHT) {
+                boid->location.x = random() % matrix->MATRIX_WIDTH - 1;
                 boid->location.y = 0;
             }
         }

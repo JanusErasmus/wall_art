@@ -29,32 +29,27 @@
 class PatternAttract : public Drawable {
 private:
     const int count = 5;
-    Boid *boids[5];
+    Boid *boids;
     Attractor attractor;
 
 public:
-    PatternAttract(Effects *effects) : Drawable(effects) {
+    PatternAttract(Boid *boids) {
         name = (char *)"Attract";
-        for (int i = 0; i < count; i++) {
-            boids[i] = new Boid();
-        }
+        this->boids = boids;
     }
 
     virtual ~PatternAttract() {
-        for (int i = 0; i < count; i++) {
-            delete boids[i];
-        }
     }
 
-    void start() {
+    void start(Matrix *matrix) {
         int direction = random() % 2;
         if (direction == 0)
             direction = -1;
 
         for (int i = 0; i < count; i++) {
-            Boid *boid = boids[i];
-            boid->location.x = MATRIX_CENTER_X - 1;
-            boid->location.y = (MATRIX_HEIGHT - 1) - i;
+            Boid *boid = &boids[i];
+            boid->location.x = matrix->MATRIX_CENTER_X - 1;
+            boid->location.y = (matrix->MATRIX_HEIGHT - 1) - i;
             boid->mass = 1; // random(0.1, 2);
             // boid.velocity.x = ((float) random(40, 50)) / 100.0;
             boid->velocity.x = ((float) (random() % 60) + 20) / 100.0;
@@ -66,15 +61,15 @@ public:
         }
     }
 
-    unsigned int drawFrame() {
-        Matrix *matrix = effects->getMatrix();
+    unsigned int drawFrame(Effects *effects) {
+        Matrix *matrix = effects->matrix;
 
         // dim all pixels on the display
         uint8_t dim = beatsin8(2, 170, 250);
         effects->DimAll(dim);
 
         for (int i = 0; i < count; i++) {
-            Boid *boid = boids[i];
+            Boid *boid = &boids[i];
 
             PVector force = attractor.attract(boid);
             boid->applyForce(force);

@@ -1,7 +1,5 @@
 #include "Aurora/Boid.h"
 
-#define MATRIX_WIDTH 16
-#define MATRIX_HEIGHT 16
 
 static float mapfloat(float x, float in_min, float in_max, float out_min, float out_max) {
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -210,20 +208,20 @@ void Boid::arrive(PVector target) {
     //Serial.println(d);
 }
 
-void Boid::wrapAroundBorders() {
-    if (location.x < 0) location.x = MATRIX_WIDTH - 1;
-    if (location.y < 0) location.y = MATRIX_HEIGHT - 1;
-    if (location.x >= MATRIX_WIDTH) location.x = 0;
-    if (location.y >= MATRIX_HEIGHT) location.y = 0;
+void Boid::wrapAroundBorders(int width, int height) {
+    if (location.x < 0) location.x = width - 1;
+    if (location.y < 0) location.y = height - 1;
+    if (location.x >= width) location.x = 0;
+    if (location.y >= height) location.y = 0;
 }
 
-void Boid::avoidBorders() {
+void Boid::avoidBorders(int width, int height) {
     PVector desired = velocity;
 
-    if (location.x < MATRIX_WIDTH / 4) desired = PVector(maxspeed, velocity.y);
-    if (location.x >= MATRIX_WIDTH - MATRIX_WIDTH / 4) desired = PVector(-maxspeed, velocity.y);
-    if (location.y < MATRIX_HEIGHT / 4) desired = PVector(velocity.x, maxspeed);
-    if (location.y >= MATRIX_HEIGHT - MATRIX_HEIGHT / 4) desired = PVector(velocity.x, -maxspeed);
+    if (location.x < width / 4) desired = PVector(maxspeed, velocity.y);
+    if (location.x >= width - width / 4) desired = PVector(-maxspeed, velocity.y);
+    if (location.y < height / 4) desired = PVector(velocity.x, maxspeed);
+    if (location.y >= height - height / 4) desired = PVector(velocity.x, -maxspeed);
 
     if (desired != velocity) {
         PVector steer = desired - velocity;
@@ -233,15 +231,15 @@ void Boid::avoidBorders() {
 
     if (location.x < 0) location.x = 0;
     if (location.y < 0) location.y = 0;
-    if (location.x >= MATRIX_WIDTH) location.x = MATRIX_WIDTH - 1;
-    if (location.y >= MATRIX_HEIGHT) location.y = MATRIX_HEIGHT - 1;
+    if (location.x >= width) location.x = width - 1;
+    if (location.y >= height) location.y = height - 1;
 }
 
-bool Boid::bounceOffBorders(float bounce) {
+bool Boid::bounceOffBorders(float bounce, int width, int height) {
     bool bounced = false;
 
-    if (location.x >= MATRIX_WIDTH) {
-        location.x = MATRIX_WIDTH - 1;
+    if (location.x >= width) {
+        location.x = width - 1;
         velocity.x *= -bounce;
         bounced = true;
     }
@@ -251,8 +249,8 @@ bool Boid::bounceOffBorders(float bounce) {
         bounced = true;
     }
 
-    if (location.y >= MATRIX_HEIGHT) {
-        location.y = MATRIX_HEIGHT - 1;
+    if (location.y >= height) {
+        location.y = height - 1;
         velocity.y *= -bounce;
         bounced = true;
     }

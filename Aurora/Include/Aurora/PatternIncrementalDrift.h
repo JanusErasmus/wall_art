@@ -27,18 +27,18 @@
 
 class PatternIncrementalDrift : public Drawable {
 public:
-    PatternIncrementalDrift(Effects *effects) : Drawable(effects) {
+    PatternIncrementalDrift() {
         name = (char *)"Incremental Drift";
     }
 
-    unsigned int drawFrame() {
+    unsigned int drawFrame(Effects *effects) {
         uint8_t dim = beatsin8(2, 230, 250);
-        Matrix *matrix = effects->getMatrix();
+        Matrix *matrix = effects->matrix;
         effects->DimAll(dim);
 
-        for (int i = 2; i <= MATRIX_WIDTH / 2; i++)
+        for (int i = 2; i <= matrix->MATRIX_WIDTH / 2; i++)
         {
-            CRGB color = effects->ColorFromCurrentPalette((i - 2) * (240 / (MATRIX_WIDTH / 2)));
+            CRGB color = effects->ColorFromCurrentPalette((i - 2) * (240 / (matrix->MATRIX_WIDTH / 2)));
 
             // This looked good, even on a 64x96 screens
             //uint8_t x = beatcos8((17 - i) * 2, MATRIX_CENTER_X - i, MATRIX_CENTER_X + i);
@@ -53,8 +53,8 @@ public:
             //uint8_t y = beatsin8((min(MATRIX_CENTER_X, MATRIX_CENTER_Y) + 1 - i) * 2, MATRIX_CENTER_Y - i, MATRIX_CENTER_Y + i);
 
             // This looks better on a non square thing, feels more dense
-            uint8_t x = beatcos8((mmax(MATRIX_CENTER_X, MATRIX_CENTER_Y) + 1 - i) * 2, MATRIX_CENTER_X - i, MATRIX_CENTER_X + i);
-            uint8_t y = beatsin8((mmax(MATRIX_CENTER_X, MATRIX_CENTER_Y) + 1 - i) * 2, MATRIX_CENTER_Y - i, MATRIX_CENTER_Y + i);
+            uint8_t x = beatcos8((mmax(matrix->MATRIX_CENTER_X, matrix->MATRIX_CENTER_Y) + 1 - i) * 2, matrix->MATRIX_CENTER_X - i, matrix->MATRIX_CENTER_X + i);
+            uint8_t y = beatsin8((mmax(matrix->MATRIX_CENTER_X, matrix->MATRIX_CENTER_Y) + 1 - i) * 2, matrix->MATRIX_CENTER_Y - i, matrix->MATRIX_CENTER_Y + i);
 
             //backgroundLayer.drawPixel(x, y, color);
             matrix->drawPixel(x, y, color);

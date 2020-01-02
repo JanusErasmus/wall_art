@@ -25,13 +25,11 @@
 #include "Effects.h"
 
 class Drawable{
-protected:
-    Effects *effects;
 
 public:
     const char* name;
 
-    Drawable(Effects *effects){ this->effects = effects; }
+    Drawable(){  }
 
     virtual bool isRunnable() {
         return false;
@@ -43,12 +41,12 @@ public:
 
     // a single frame should be drawn as fast as possible, without any delay or blocking
     // return how many millisecond delay is requested before the next call to drawFrame()
-    virtual unsigned int drawFrame() {
+    virtual unsigned int drawFrame(Effects *effects) {
         //backgroundLayer.fillScreen({ 0, 0, 0 });
         return 0;
     };
 
-    virtual void start() {};
+    virtual void start(Matrix *matrix) {};
     virtual void stop() {};
 };
 

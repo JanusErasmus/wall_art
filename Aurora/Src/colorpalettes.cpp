@@ -10,7 +10,6 @@ const CRGBPalette16 PotassiumFireColors_p = CRGBPalette16(CRGB::Black, CRGB::Ind
 const CRGBPalette16 LithiumFireColors_p   = CRGBPalette16(CRGB::Black, CRGB::FireBrick, CRGB::Pink, CRGB::DeepPink);       //* Red
 const CRGBPalette16 IceColors_p           = CRGBPalette16(CRGB::Black, CRGB::Blue, CRGB::Aqua, CRGB::White);const CRGBPalette16 GrayColors_p = CRGBPalette16(CRGB::Black, CRGB::White);
 
-
 const CRGBPalette16 CloudColors_p =
         CRGBPalette16(
     CRGB::Blue,

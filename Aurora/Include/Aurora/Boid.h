@@ -88,8 +88,10 @@ public:
 
     void applyForce(PVector force);
     void repelForce(PVector obstacle, float radius);
-    void wrapAroundBorders();
 
+    void wrapAroundBorders(int width, int height);
+    void avoidBorders(int width, int height);
+    bool bounceOffBorders(float bounce,int width, int height);
 };
 
 
