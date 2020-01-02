@@ -29,21 +29,16 @@
 class PatternAttract : public Drawable {
 private:
     const int count = 5;
-    Boid *boids[5];
+    Boid *boids;
     Attractor attractor;
 
 public:
-    PatternAttract() {
+    PatternAttract(Boid *boids) {
         name = (char *)"Attract";
-        for (int i = 0; i < count; i++) {
-            boids[i] = new Boid();
-        }
+        this->boids = boids;
     }
 
     virtual ~PatternAttract() {
-        for (int i = 0; i < count; i++) {
-            delete boids[i];
-        }
     }
 
     void start(Matrix *matrix) {
@@ -52,7 +47,7 @@ public:
             direction = -1;
 
         for (int i = 0; i < count; i++) {
-            Boid *boid = boids[i];
+            Boid *boid = &boids[i];
             boid->location.x = matrix->MATRIX_CENTER_X - 1;
             boid->location.y = (matrix->MATRIX_HEIGHT - 1) - i;
             boid->mass = 1; // random(0.1, 2);
@@ -74,7 +69,7 @@ public:
         effects->DimAll(dim);
 
         for (int i = 0; i < count; i++) {
-            Boid *boid = boids[i];
+            Boid *boid = &boids[i];
 
             PVector force = attractor.attract(boid);
             boid->applyForce(force);

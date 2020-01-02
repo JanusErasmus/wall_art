@@ -38,12 +38,13 @@
 
 class PatternFlock : public Drawable {
 public:
-    PatternFlock() {
+    PatternFlock(Boid *boids) {
         name = (char *)"Flock";
+        this->boids = boids;
     }
 
     const int boidCount = 7;
-    Boid boids[7];
+    Boid *boids;
     Boid predator;
 
     PVector wind;
@@ -52,10 +53,11 @@ public:
 
     void start(Matrix *matrix) {
         for (int i = 0; i < boidCount; i++) {
-            boids[i].location.x = matrix->MATRIX_CENTER_X;
-            boids[i].location.y = matrix->MATRIX_CENTRE_Y;
-            boids[i].maxspeed = 0.380;
-            boids[i].maxforce = 0.015;
+            Boid *boid = &boids[i];
+            boid->location.x = matrix->MATRIX_CENTER_X;
+            boid->location.y = matrix->MATRIX_CENTRE_Y;
+            boid->maxspeed = 0.380;
+            boid->maxforce = 0.015;
         }
 
 

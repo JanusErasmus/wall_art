@@ -12,9 +12,10 @@ typedef uint8_t byte;
 class Matrix
 {
 protected:
-    CRGB framebuffer[16][16];
 
 public:
+    CRGB *framebuffer;
+//    CRGB framebuffer[16][16];
     int MATRIX_WIDTH;
     int MATRIX_HEIGHT;
     int NUM_LEDS;
@@ -24,7 +25,7 @@ public:
     byte MATRIX_CENTRE_X;
     byte MATRIX_CENTRE_Y;
 
-    Matrix();
+    Matrix(int width, int height);
     virtual ~Matrix(){}
 
     virtual void drawPixel(int x, int y, CRGB color) = 0;
@@ -32,7 +33,6 @@ public:
     virtual void clear() = 0;
     virtual void paint() = 0;
 
-    CRGB *getBuffer(){ return (CRGB*)&framebuffer[0][0]; }
 
     uint16_t XY(int x, int y){ return x + y * MATRIX_WIDTH; }
 };

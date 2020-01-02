@@ -26,8 +26,9 @@
 
 class PatternFlowField : public Drawable {
 public:
-    PatternFlowField() {
+    PatternFlowField(Boid *boids) {
         name = (char *)"FlowField";
+        this->boids = boids;
     }
 
     uint16_t x;
@@ -38,7 +39,7 @@ public:
     uint16_t scale = 26;
 
     static const int count = 5;
-    Boid boids[5];
+    Boid *boids;
 
     byte hue = 0;
 
@@ -48,8 +49,9 @@ public:
         z = random16();
 
         for (int i = 0; i < count; i++) {
-            boids[i].location.x = random() % matrix->MATRIX_WIDTH;
-            boids[i].location.y = random() % matrix->MATRIX_HEIGHT;
+            Boid *boid = &boids[i];
+            boid->location.x = random() % matrix->MATRIX_WIDTH;
+            boid->location.y = random() % matrix->MATRIX_HEIGHT;
         }
     }
 

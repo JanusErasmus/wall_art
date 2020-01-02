@@ -44,10 +44,11 @@ const pallette_s palettes[] = {
         {0, 0}
 };
 
+Boid boids[16];
 
 AnimateDisco disco;
-PatternBounce bounce;
-PatternFlock flock;
+PatternBounce bounce(boids);
+PatternFlock flock(boids);
 PatternSwirl swirl;
 PatternSpiral spiral;
 PatternSpiro spiro;
@@ -55,22 +56,22 @@ PatternWave wave;
 PatternRadar radar;
 PatternPendulumWave p_wave;
 PatternIncrementalDrift drift;
-PatternFlowField flow;
-PatternAttract attract;
+PatternFlowField flow(boids);
+PatternAttract attract(boids);
 PatternCube cube;
 
 Drawable *patterns[] = {
-        &cube,
         &bounce,
         &flock,
+        &flow,
         &swirl,
         &spiral,
         &spiro,
         &wave,
         &radar,
+        &cube,
         //&p_wave,
         &drift,
-        &flow,
         &attract,
         &disco,
         0
@@ -81,7 +82,7 @@ Effects::Effects(Matrix *matrix)
     curr_pattern = 0;
     paletteIndex = 0;
     this->matrix = matrix;
-    leds = matrix->getBuffer();
+    leds = matrix->framebuffer;// &matrix->framebuffer[0][0];
     currentPalette = &RainbowColors_p;
 
     patterns[curr_pattern]->start(matrix);
