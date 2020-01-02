@@ -4,8 +4,6 @@
 
 #ifndef matrix_h
 #define matrix_h
-
-#include "Adafruit_GFX.h"
 #include "pixeltypes.h"
 
 #define MATRIX_WIDTH 16
@@ -26,7 +24,7 @@ const byte MATRIX_CENTRE_Y = MATRIX_CENTER_Y - 1;
 #define mmax(a,b) (a>b)?(a):(b)
 
 
-class Matrix : public Adafruit_GFX
+class Matrix
 {
     CRGB framebuffer[16][16];
 

@@ -120,17 +120,6 @@ public:
                 multiTimer[1].count,  // y2
                 multiTimer[2].count); // color
 
-        // this doesn't work -- merlin
-        // manipulate the screen buffer
-        // with fixed parameters (could be oszillators too)
-        // center x, y, radius, scale color down
-        // --> affects always a square with an odd length
-        effects->SpiralStream(15, 15, 16, 128);
-
-        // why not several times?!
-        effects->SpiralStream(16, 6, 6, 128);
-        effects->SpiralStream(10, 24, 10, 128);
-
         // increase the contrast
         effects->DimAll(224);
 

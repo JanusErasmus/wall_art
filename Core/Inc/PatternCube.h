@@ -176,7 +176,7 @@ public:
         //fadeToBlackBy( matrixleds, NUMMATRIX, 128);
 
         //zCamera = beatsin8(2, 100, 140);
-        zCamera = beatsin8(2, mmin(MATRIX_WIDTH*2.5, 120.0), 160);
+        zCamera = beatsin8(2, 120, 150);
         AngxSpeed = beatsin8(3, 1, 5) / 100.0f;
         AngySpeed = beatcos8(5, 1, 5) / 100.0f;
 
@@ -203,7 +203,7 @@ public:
             e = edge + i;
             if (!e->visible) {
                 //backgroundLayer.drawLine(screen[e->x].x, screen[e->x].y, screen[e->y].x, screen[e->y].y, color);
-                matrix->drawLine(screen[e->x].x, screen[e->x].y, screen[e->y].x, screen[e->y].y, color);
+                effects->BresenhamLine(screen[e->x].x, screen[e->x].y, screen[e->y].x, screen[e->y].y, color);
             }
         }
 
@@ -217,7 +217,7 @@ public:
             if (e->visible)
             {
                 //backgroundLayer.drawLine(screen[e->x].x, screen[e->x].y, screen[e->y].x, screen[e->y].y, color);
-                matrix->drawLine(screen[e->x].x, screen[e->x].y, screen[e->y].x, screen[e->y].y, color);
+                effects->BresenhamLine(screen[e->x].x, screen[e->x].y, screen[e->y].x, screen[e->y].y, color);
             }
         }
 

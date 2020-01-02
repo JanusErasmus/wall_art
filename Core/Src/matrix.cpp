@@ -2,14 +2,22 @@
 #include "ws2812.h"
 #include <math.h>
 
-
-Matrix::Matrix() : Adafruit_GFX(16, 16)
+Matrix::Matrix()
 {
 
 }
 
 void Matrix::drawPixel(int x, int y, CRGB color)
 {
+    if(x < 0)
+        x = 0;
+    if(x > 15)
+        x = 15;
+    if(y < 0)
+        y = 0;
+    if(y > 15)
+        y = 15;
+
     framebuffer[x][y] = color;
 }
 

@@ -40,15 +40,15 @@ Drawable *patterns[] = {
         &bounce,
         &flock,
         &swirl,
-        //&spiral,
-        //&spiro,
+        &spiral,
+        &spiro,
         &wave,
         &radar,
         //&p_wave,
         &drift,
-        //&flow,
+        &flow,
         &attract,
-        //&cube,
+        &cube,
         0
 };
 
