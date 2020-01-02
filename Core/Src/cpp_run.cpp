@@ -1,58 +1,58 @@
-#include "animate_disco.h"
-#include "Adafruit_GFX.h"
 #include "ws2812.h"
-
+#include "led_matrix.h"
 #include "main.h"
 
-#include "PatternBounce.h"
-#include "PatternFlock.h"
-#include "PatternSwirl.h"
-#include "PatternSpiral.h"
-#include "PatternSpiro.h"
-#include "PatternWave.h"
-#include "PatternRadar.h"
-#include "PatternPendulumWave.h"
-#include "PatternIncrementalDrift.h"
-#include "PatternFlowField.h"
-#include "PatternAttract.h"
-#include "PatternCube.h"
-#include "Effects.h"
+#include "Aurora/animate_disco.h"
+#include "Aurora/PatternBounce.h"
+#include "Aurora/PatternFlock.h"
+#include "Aurora/PatternSwirl.h"
+#include "Aurora/PatternSpiral.h"
+#include "Aurora/PatternSpiro.h"
+#include "Aurora/PatternWave.h"
+#include "Aurora/PatternRadar.h"
+#include "Aurora/PatternPendulumWave.h"
+#include "Aurora/PatternIncrementalDrift.h"
+#include "Aurora/PatternFlowField.h"
+#include "Aurora/PatternAttract.h"
+#include "Aurora/PatternCube.h"
+#include "Aurora/Effects.h"
 
-Matrix matrix;
+LEDmatrix matrix;
 Effects effects(&matrix);
+Boid boids[16];
 
 AnimateDisco disco(&effects);
-PatternBounce bounce(&effects);
-PatternFlock flock(&effects);
+PatternBounce bounce(&effects, boids);
+PatternFlock flock(&effects, boids);
 PatternSwirl swirl(&effects);
-PatternSpiral spiral(&effects); //TODO NOT working
-PatternSpiro spiro(&effects); //TODO NOT working
+PatternSpiral spiral(&effects);
+PatternSpiro spiro(&effects);
 PatternWave wave(&effects);
 PatternRadar radar(&effects);
 PatternPendulumWave p_wave(&effects);
 PatternIncrementalDrift drift(&effects);
-PatternFlowField flow(&effects);//TODO NOT working
-PatternAttract attract(&effects);
-PatternCube cube(&effects); //TODO NOT working
+PatternFlowField flow(&effects, boids);
+PatternAttract attract(&effects, boids);
+PatternCube cube(&effects);
 
 Drawable *patterns[] = {
-        &disco,
-        &bounce,
+        &cube,
+        &attract,
         &flock,
+        &bounce,
+        &flow,
+        &spiro,
+        &spiral,
         &swirl,
-        //&spiral,
-        //&spiro,
         &wave,
         &radar,
         //&p_wave,
         &drift,
-        //&flow,
-        &attract,
-        //&cube,
+        &disco,
         0
 };
 
-int curr_pattern = 1;
+int curr_pattern = 0;
 void setNextPattern()
 {
     curr_pattern++;

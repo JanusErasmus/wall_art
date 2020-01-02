@@ -36,9 +36,12 @@ public:
         Matrix *matrix = effects->getMatrix();
         effects->DimAll(dim);
 
-        for (int i = 2; i <= MATRIX_WIDTH / 2; i++)
+        int MATRIX_CENTER_X = (matrix->frame_buffer->width / 2) - 1;
+        int MATRIX_CENTER_Y = (matrix->frame_buffer->height / 2) - 1;
+
+        for (int i = 2; i <= (matrix->frame_buffer->width) / 2; i++)
         {
-            CRGB color = effects->ColorFromCurrentPalette((i - 2) * (240 / (MATRIX_WIDTH / 2)));
+            CRGB color = effects->ColorFromCurrentPalette((i - 2) * (240 / ((matrix->frame_buffer->width) / 2)));
 
             // This looked good, even on a 64x96 screens
             //uint8_t x = beatcos8((17 - i) * 2, MATRIX_CENTER_X - i, MATRIX_CENTER_X + i);
@@ -53,8 +56,8 @@ public:
             //uint8_t y = beatsin8((min(MATRIX_CENTER_X, MATRIX_CENTER_Y) + 1 - i) * 2, MATRIX_CENTER_Y - i, MATRIX_CENTER_Y + i);
 
             // This looks better on a non square thing, feels more dense
-            uint8_t x = beatcos8((mmax(MATRIX_CENTER_X, MATRIX_CENTER_Y) + 1 - i) * 2, MATRIX_CENTER_X - i, MATRIX_CENTER_X + i);
-            uint8_t y = beatsin8((mmax(MATRIX_CENTER_X, MATRIX_CENTER_Y) + 1 - i) * 2, MATRIX_CENTER_Y - i, MATRIX_CENTER_Y + i);
+            uint8_t x = beatcos8(((matrix->frame_buffer->width) + 1 - i) * 2, MATRIX_CENTER_X - i, MATRIX_CENTER_X + i);
+            uint8_t y = beatsin8(((matrix->frame_buffer->width) + 1 - i) * 2, MATRIX_CENTER_Y - i, MATRIX_CENTER_Y + i);
 
             //backgroundLayer.drawPixel(x, y, color);
             matrix->drawPixel(x, y, color);

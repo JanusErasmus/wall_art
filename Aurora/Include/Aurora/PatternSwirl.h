@@ -50,20 +50,23 @@ public:
         effects->DimAll(blurAmount);
 
         // Use two out-of-sync sine waves
-        uint8_t  i = beatsin8(27, borderWidth, MATRIX_HEIGHT - borderWidth);
-        uint8_t  j = beatsin8(41, borderWidth, MATRIX_WIDTH - borderWidth);
+        uint8_t  i = beatsin8(27, borderWidth, matrix->frame_buffer->height - borderWidth);
+        uint8_t  j = beatsin8(41, borderWidth, matrix->frame_buffer->width - borderWidth);
         // Also calculate some reflections
-        uint8_t ni = (MATRIX_WIDTH - 1) - i;
-        uint8_t nj = (MATRIX_WIDTH - 1) - j;
+        uint8_t ni = (matrix->frame_buffer->width - 1) - i;
+        uint8_t nj = (matrix->frame_buffer->width - 1) - j;
+
+        int NUMMATRIX = matrix->frame_buffer->size;
 
         // The color of each point shifts over time, each at a different speed.
         uint16_t ms = HAL_GetTick();
-        effects->leds[effects->XY(i, j)  ] += effects->XY(i, j)  == NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 11);
-        effects->leds[effects->XY(j, i)  ] += effects->XY(j, i)  == NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 13);
-        effects->leds[effects->XY(ni, nj)] += effects->XY(ni, nj)== NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 17);
-        effects->leds[effects->XY(nj, ni)] += effects->XY(nj, ni)== NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 29);
-        effects->leds[effects->XY(i, nj) ] += effects->XY(i, nj) == NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 37);
-        effects->leds[effects->XY(ni, j) ] += effects->XY(ni, j) == NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 41);
+        CRGB *leds = matrix->frame_buffer->buffer;
+        leds[effects->XY(i, j)  ] += effects->XY(i, j)  == NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 11);
+        leds[effects->XY(j, i)  ] += effects->XY(j, i)  == NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 13);
+        leds[effects->XY(ni, nj)] += effects->XY(ni, nj)== NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 17);
+        leds[effects->XY(nj, ni)] += effects->XY(nj, ni)== NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 29);
+        leds[effects->XY(i, nj) ] += effects->XY(i, nj) == NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 37);
+        leds[effects->XY(ni, j) ] += effects->XY(ni, j) == NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 41);
 
         matrix->paint();
         return 0;

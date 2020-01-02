@@ -36,13 +36,15 @@
 
 class PatternCube : public Drawable {
 private:
-    float focal = 30; // Focal of the camera
-    int cubeWidth = mmin(MATRIX_WIDTH-4,MATRIX_HEIGHT-4); // Cube size
-    float Angx = 20.0, AngxSpeed = 0.05; // rotation (angle+speed) around X-axis
-    float Angy = 10.0, AngySpeed = 0.05; // rotation (angle+speed) around Y-axis
-    float Ox = MATRIX_WIDTH/2, Oy = MATRIX_HEIGHT/2; // position (x,y) of the frame center
-    //int zCamera = 110; // distance from cube to the eye of the camera
-    int zCamera = MATRIX_WIDTH * 5; // distance from cube to the eye of the camera
+    float focal; // Focal of the camera
+    int cubeWidth; // Cube size
+    float Angx; // rotation (angle+speed) around X-axis
+    float Angy; // rotation (angle+speed) around Y-axis
+    float AngxSpeed;
+    float AngySpeed;
+    float Ox; // position (x,y) of the frame center
+    float Oy;
+    int zCamera; // distance from cube to the eye of the camera
 
     // Local vertices
     Vertex  local[8];
@@ -158,25 +160,29 @@ public:
     PatternCube(Effects *effects) : Drawable(effects) {
         name = (char *)"Cube";
         make(cubeWidth);
+
+        Matrix *matrix = effects->getMatrix();
+        int MATRIX_WIDTH = matrix->frame_buffer->width;
+        int MATRIX_HEIGHT = matrix->frame_buffer->height;
+
+        focal = 30; // Focal of the camera
+        cubeWidth = mmin(MATRIX_WIDTH-5,MATRIX_HEIGHT-5); // Cube size
+        Angx = 20.0;
+        AngxSpeed = 0.05; // rotation (angle+speed) around X-axis
+        Angy = 10.0;
+        AngySpeed = 0.05; // rotation (angle+speed) around Y-axis
+        Ox = MATRIX_WIDTH/2;
+        Oy = MATRIX_HEIGHT/2; // position (x,y) of the frame center
+        //int zCamera = 110; // distance from cube to the eye of the camera
+        zCamera = MATRIX_WIDTH * 5; // distance from cube to the eye of the camera
+
     }
 
     unsigned int drawFrame() {
 
-#if FASTLED_VERSION >= 3001000
-        if (MATRIX_WIDTH > 32)  {
-            blur2d(effects.leds, MATRIX_WIDTH, MATRIX_HEIGHT, 255);
-        } else {
-            // larger numbers = more tails behind
-            fadeToBlackBy( matrixleds, NUMMATRIX, 40);
-        }
-#else
         uint8_t blurAmount = beatsin8(2, 10, 240);
         effects->DimAll(blurAmount);
-#endif
-        //fadeToBlackBy( matrixleds, NUMMATRIX, 128);
-
-        //zCamera = beatsin8(2, 100, 140);
-        zCamera = beatsin8(2, mmin(MATRIX_WIDTH*2.5, 120.0), 160);
+        zCamera = beatsin8(2, 75, 120);
         AngxSpeed = beatsin8(3, 1, 5) / 100.0f;
         AngySpeed = beatcos8(5, 1, 5) / 100.0f;
 
@@ -202,8 +208,7 @@ public:
         {
             e = edge + i;
             if (!e->visible) {
-                //backgroundLayer.drawLine(screen[e->x].x, screen[e->x].y, screen[e->y].x, screen[e->y].y, color);
-                matrix->drawLine(screen[e->x].x, screen[e->x].y, screen[e->y].x, screen[e->y].y, color);
+                effects->BresenhamLine(screen[e->x].x, screen[e->x].y, screen[e->y].x, screen[e->y].y, color);
             }
         }
 
@@ -216,8 +221,7 @@ public:
             e = edge + i;
             if (e->visible)
             {
-                //backgroundLayer.drawLine(screen[e->x].x, screen[e->x].y, screen[e->y].x, screen[e->y].y, color);
-                matrix->drawLine(screen[e->x].x, screen[e->x].y, screen[e->y].x, screen[e->y].y, color);
+                effects->BresenhamLine(screen[e->x].x, screen[e->x].y, screen[e->y].x, screen[e->y].y, color);
             }
         }
 

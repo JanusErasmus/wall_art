@@ -44,10 +44,10 @@ public:
         Matrix *matrix = effects->getMatrix();
         effects->DimAll(200);
 
-        for (int x = 0; x < MATRIX_WIDTH; x++)
+        for (int x = 0; x < matrix->frame_buffer->width; x++)
         {
             //uint8_t y = beatsin8(x + MATRIX_WIDTH, 0, MATRIX_HEIGHT);
-            uint8_t y = beatsin8(x + 1, 0, MATRIX_HEIGHT);
+            uint8_t y = beatsin8(x + 1, 0, matrix->frame_buffer->height);
 
             //backgroundLayer.drawPixel(x, y, effects.ColorFromCurrentPalette(x * 7));
             CRGB color = effects->ColorFromCurrentPalette(x * 7);

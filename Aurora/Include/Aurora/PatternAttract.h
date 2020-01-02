@@ -29,40 +29,39 @@
 class PatternAttract : public Drawable {
 private:
     const int count = 5;
-    Boid *boids[5];
+    Boid *boids;
     Attractor attractor;
 
 public:
-    PatternAttract(Effects *effects) : Drawable(effects) {
+    PatternAttract(Effects *effects, Boid *boids) : Drawable(effects) {
         name = (char *)"Attract";
-        for (int i = 0; i < count; i++) {
-            boids[i] = new Boid();
-        }
+        this->boids = boids;
     }
 
     virtual ~PatternAttract() {
-        for (int i = 0; i < count; i++) {
-            delete boids[i];
-        }
     }
 
     void start() {
-        int direction = random() % 2;
+        int direction = rand() % 2;
         if (direction == 0)
             direction = -1;
 
+        Matrix *matrix = effects->getMatrix();
+        int MATRIX_CENTER_X = (matrix->frame_buffer->width / 2) - 1;
+
         for (int i = 0; i < count; i++) {
-            Boid *boid = boids[i];
+            Boid *boid = &boids[i];
             boid->location.x = MATRIX_CENTER_X - 1;
-            boid->location.y = (MATRIX_HEIGHT - 1) - i;
-            boid->mass = 1; // random(0.1, 2);
-            // boid.velocity.x = ((float) random(40, 50)) / 100.0;
-            boid->velocity.x = ((float) (random() % 60) + 20) / 100.0;
+            boid->location.y = (matrix->frame_buffer->height - 1) - i;
+            boid->mass = 1; // rand(0.1, 2);
+            boid->velocity.x = ((float) (rand() % 50) + 20) / 100.0;
             boid->velocity.x *= direction;
-            boid->velocity.y = 0;
-            //boid.colorIndex = i * 32;
+            boid->velocity.y =  0;
+            boid->maxspeed = 1.5;
+            boid->maxforce = 0.05;
+            boid->desiredseparation = 4;
+            boid->neighbordist = 8;
             boid->colorIndex = i * (240 / count);
-            //dim = random(170, 250);
         }
     }
 
@@ -74,7 +73,7 @@ public:
         effects->DimAll(dim);
 
         for (int i = 0; i < count; i++) {
-            Boid *boid = boids[i];
+            Boid *boid = &boids[i];
 
             PVector force = attractor.attract(boid);
             boid->applyForce(force);

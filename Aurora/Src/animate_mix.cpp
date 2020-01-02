@@ -1,4 +1,4 @@
-#include "animate_mix.h"
+#include "Aurora/animate_mix.h"
 #include "ws2812.h"
 
 #include "main.h"

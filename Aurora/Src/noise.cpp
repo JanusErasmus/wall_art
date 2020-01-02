@@ -1,8 +1,8 @@
 #define FASTLED_INTERNAL
 #include <string.h>
 
-#include "pixeltypes.h"
-#include "colorutils.h"
+#include "Aurora/pixeltypes.h"
+#include "Aurora/colorutils.h"
 
 #define P(x) FL_PGM_READ_BYTE_NEAR(p + x)
 

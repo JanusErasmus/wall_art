@@ -28,30 +28,32 @@ private:
     byte thetaUpdate = 0;
     byte thetaUpdateFrequency = 0;
     byte theta = 0;
-
     byte hueUpdate = 0;
     byte hueUpdateFrequency = 0;
     byte hue = 0;
-
     byte rotation = 0;
-
-    uint8_t scale = 256 / MATRIX_WIDTH;
-
-    uint8_t maxX = MATRIX_WIDTH - 1;
-    uint8_t maxY = MATRIX_HEIGHT - 1;
+    uint8_t scale;
+    uint8_t maxX;
+    uint8_t maxY;
 
     uint8_t waveCount = 1;
 
 public:
     PatternWave(Effects *effects) : Drawable(effects) {
         name = (char *)"Wave";
+
+        Matrix *matrix = effects->getMatrix();
+        scale = 256 / matrix->frame_buffer->height;
+        maxX = matrix->frame_buffer->width - 1;
+        maxY = matrix->frame_buffer->height - 1;
     }
 
     void start() {
-        rotation = random() % 4;
-        if (MATRIX_HEIGHT > MATRIX_WIDTH) rotation = 1;
-        if (MATRIX_HEIGHT < MATRIX_WIDTH) rotation = 0;
-        waveCount = random() % 3 + 1;
+        rotation = rand() % 4;
+        Matrix *matrix = effects->getMatrix();
+        if (matrix->frame_buffer->height > matrix->frame_buffer->width) rotation = 1;
+        if (matrix->frame_buffer->height < matrix->frame_buffer->width) rotation = 0;
+        waveCount = rand() % 3 + 1;
         //thetaUpdateFrequency = random(1, 2);
         //hueUpdateFrequency = random(1, 6);
     }
@@ -62,7 +64,7 @@ public:
 
         switch (rotation) {
         case 0:
-            for (int x = 0; x < MATRIX_WIDTH; x++) {
+            for (int x = 0; x <  matrix->frame_buffer->width; x++) {
                 n = quadwave8(x * 2 + theta) / scale;
                 //backgroundLayer.drawPixel(x, n, effects.ColorFromCurrentPalette(x + hue));
                 CRGB color = effects->ColorFromCurrentPalette(x + hue);
@@ -74,7 +76,7 @@ public:
             break;
 
         case 1:
-            for (int y = 0; y < MATRIX_HEIGHT; y++) {
+            for (int y = 0; y <  matrix->frame_buffer->height; y++) {
                 n = quadwave8(y * 2 + theta) / scale;
                 // backgroundLayer.drawPixel(n, y, effects.ColorFromCurrentPalette(y + hue));
                 CRGB color = effects->ColorFromCurrentPalette(y + hue);
@@ -86,7 +88,7 @@ public:
             break;
 
         case 2:
-            for (int x = 0; x < MATRIX_WIDTH; x++) {
+            for (int x = 0; x <  matrix->frame_buffer->width; x++) {
                 n = quadwave8(x * 2 - theta) / scale;
                 // backgroundLayer.drawPixel(x, n, effects.ColorFromCurrentPalette(x + hue));
                 CRGB color = effects->ColorFromCurrentPalette(x + hue);
@@ -98,7 +100,7 @@ public:
             break;
 
         case 3:
-            for (int y = 0; y < MATRIX_HEIGHT; y++) {
+            for (int y = 0; y <  matrix->frame_buffer->height; y++) {
                 n = quadwave8(y * 2 - theta) / scale;
                 // backgroundLayer.drawPixel(n, y, effects.ColorFromCurrentPalette(y + hue));
                 CRGB color = effects->ColorFromCurrentPalette(y + hue);

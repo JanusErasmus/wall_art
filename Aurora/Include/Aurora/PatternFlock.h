@@ -38,12 +38,13 @@
 
 class PatternFlock : public Drawable {
 public:
-    PatternFlock(Effects *effects) : Drawable(effects) {
+    PatternFlock(Effects *effects, Boid *boids) : Drawable(effects) {
         name = (char *)"Flock";
+        this->boids = boids;
     }
 
     const int boidCount = 7;
-    Boid boids[7];
+    Boid *boids;
     Boid predator;
 
     PVector wind;
@@ -51,15 +52,21 @@ public:
     bool predatorPresent = true;
 
     void start() {
+
+        Matrix *matrix = effects->getMatrix();
+        int MATRIX_CENTER_X = (matrix->frame_buffer->width / 2) - 1;
+        int MATRIX_CENTRE_Y = (matrix->frame_buffer->height / 2) - 1;
+
         for (int i = 0; i < boidCount; i++) {
-            boids[i].location.x = MATRIX_CENTER_X;
-            boids[i].location.y = MATRIX_CENTRE_Y;
-            boids[i].maxspeed = 0.380;
-            boids[i].maxforce = 0.015;
+            Boid *boid = &boids[i];
+            boid->location.x = MATRIX_CENTER_X;
+            boid->location.y = MATRIX_CENTRE_Y;
+            boid->maxspeed = 0.380;
+            boid->maxforce = 0.015;
         }
 
 
-        predator = Boid(MATRIX_CENTER_X / 2, MATRIX_CENTER_Y / 2);
+        predator = Boid(MATRIX_CENTER_X / 2, MATRIX_CENTRE_Y / 2);
         predatorPresent = true;
         predator.maxspeed = 0.385;
         predator.maxforce = 0.020;
@@ -71,7 +78,7 @@ public:
         Matrix *matrix = effects->getMatrix();
         effects->DimAll(230);
 
-        bool applyWind = (random() % 255) > 128;
+        bool applyWind = (rand() % 255) > 128;
         if (applyWind) {
             wind.x = Boid::randomf() * .015;
             wind.y = Boid::randomf() * .015;
@@ -81,7 +88,7 @@ public:
 
         for (int i = 0; i < boidCount; i++)
         {
-            Boid * boid = &boids[i];
+            Boid *boid = &boids[i];
 
             if (predatorPresent) {
                 // flee from predator

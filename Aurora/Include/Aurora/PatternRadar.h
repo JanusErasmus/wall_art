@@ -35,20 +35,24 @@ public:
 
     unsigned int drawFrame() {
         Matrix *matrix = effects->getMatrix();
-        if (MATRIX_WIDTH < 25) {
+        if (matrix->frame_buffer->height < 25) {
             effects->DimAll(252);
         } else {
             effects->DimAll(245);
         }
 
+        int MATRIX_CENTER_X = (matrix->frame_buffer->width / 2) - 1;
+
         for (int offset = 0; offset < MATRIX_CENTER_X; offset++) {
 
             byte hue = 255 - (offset * (256 / MATRIX_CENTER_X) + hueoffset);
             CRGB color = effects->ColorFromCurrentPalette(hue);
-            uint8_t x = mapcos8(theta, offset, (MATRIX_WIDTH - 1) - offset);
-            uint8_t y = mapsin8(theta, offset, (MATRIX_HEIGHT - 1) - offset);
+            uint8_t x = mapcos8(theta, offset, (matrix->frame_buffer->width - 1) - offset);
+            uint8_t y = mapsin8(theta, offset, (matrix->frame_buffer->height - 1) - offset);
             uint16_t xy = effects->XY(x, y);
-            effects->leds[xy] = color;
+
+            CRGB *leds = matrix->frame_buffer->buffer;
+            leds[xy] = color;
 
             EVERY_N_MILLIS(25) {
                 theta += 2;

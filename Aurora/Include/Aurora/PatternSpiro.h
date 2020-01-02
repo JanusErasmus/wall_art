@@ -29,14 +29,14 @@ private:
     byte theta2 = 0;
     byte hueoffset = 0;
 
-    uint8_t radiusx = MATRIX_WIDTH / 4;
-    uint8_t radiusy = MATRIX_HEIGHT / 4;
-    uint8_t minx = MATRIX_CENTER_X - radiusx;
-    uint8_t maxx = MATRIX_CENTER_X + radiusx + 1;
-    uint8_t miny = MATRIX_CENTER_Y - radiusy;
-    uint8_t maxy = MATRIX_CENTER_Y + radiusy + 1;
+    uint8_t radiusx;
+    uint8_t radiusy;
+    uint8_t minx;
+    uint8_t maxx;
+    uint8_t miny;
+    uint8_t maxy;
 
-    uint8_t spirocount = 5;
+    uint8_t spirocount = 2;
     uint8_t spirooffset = 256 / spirocount;
     boolean spiroincrement = false;
 
@@ -45,12 +45,25 @@ private:
 public:
     PatternSpiro(Effects *effects) : Drawable(effects) {
         name = (char *)"Spiro";
+
+        Matrix *matrix = effects->getMatrix();
+
+        int MATRIX_CENTER_X = (matrix->frame_buffer->width / 2) - 1;
+        int MATRIX_CENTER_Y = (matrix->frame_buffer->height / 2) - 1;
+        radiusx = matrix->frame_buffer->width / 4;
+        radiusy = matrix->frame_buffer->height / 4;
+        minx = MATRIX_CENTER_X - radiusx;
+        maxx = MATRIX_CENTER_X + radiusx + 1;
+        miny = MATRIX_CENTER_Y - radiusy;
+        maxy = MATRIX_CENTER_Y + radiusy + 1;
     }
 
     unsigned int drawFrame() {
         Matrix *matrix = effects->getMatrix();
         effects->DimAll(254);
 
+        int MATRIX_CENTER_X = (matrix->frame_buffer->width / 2) - 1;
+        int MATRIX_CENTER_Y = (matrix->frame_buffer->height / 2) - 1;
         boolean change = false;
 
         for (int i = 0; i < spirocount; i++) {
@@ -67,7 +80,7 @@ public:
             // Some coordinates are off screen, using drawpixel avoids the artifact of overwriting pixel0
             matrix->drawPixel(x2, y2, color);
             // On bigger displays, make the dot faster
-            if (MATRIX_WIDTH>32) {
+            if (matrix->frame_buffer->width > 32) {
                 matrix->drawPixel(x2-1, y2-0, color);
                 matrix->drawPixel(x2-1, y2-1, color);
                 matrix->drawPixel(x2-0, y2-1, color);
@@ -81,7 +94,7 @@ public:
             }
 
             if((x2 == MATRIX_CENTER_X && y2 == MATRIX_CENTER_Y) ||
-                    (x2 == MATRIX_CENTRE_X && y2 == MATRIX_CENTRE_Y)) change = true;
+                    (x2 == MATRIX_CENTER_X && y2 == MATRIX_CENTER_Y)) change = true;
         }
 
         theta2 += 1;
@@ -94,7 +107,7 @@ public:
             if (change && !handledChange) {
                 handledChange = true;
 
-                if (spirocount >= MATRIX_WIDTH || spirocount == 1) spiroincrement = !spiroincrement;
+                if (spirocount >= matrix->frame_buffer->width || spirocount == 1) spiroincrement = !spiroincrement;
 
                 if (spiroincrement) {
                     if(spirocount >= 4)

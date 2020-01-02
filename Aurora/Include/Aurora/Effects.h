@@ -45,29 +45,28 @@
 
 class Effects {
     Matrix *matrix;
+    CRGB *leds;
+    int MATRIX_WIDTH;
+    int MATRIX_HEIGHT;
+    int MATRIX_CENTER_Y;
+    int MATRIX_CENTER_X;
+
     static const int paletteCount = 10;
     TBlendType currentBlendType = LINEARBLEND;
     int paletteIndex;
     const CRGBPalette16 *currentPalette;
     char* currentPaletteName;
 
-
-    uint32_t noise_x;
-    uint32_t noise_y;
-    uint32_t noise_z;
-    uint32_t noise_scale_x;
-    uint32_t noise_scale_y;
-    uint8_t noise[MATRIX_WIDTH][MATRIX_HEIGHT];
-    uint8_t noisesmoothing;
-
-    // the oscillators: linear ramps 0-255
-    byte osci[6];
-
-    // sin8(osci) swinging between 0 to MATRIX_WIDTH - 1
-    byte p[6];
+//    uint32_t noise_x;
+//    uint32_t noise_y;
+//    uint32_t noise_z;
+//    uint32_t noise_scale_x;
+//    uint32_t noise_scale_y;
+//    uint8_t noise[MATRIX_WIDTH][MATRIX_HEIGHT];
+//    uint8_t noisesmoothing;
 
 public:
-    CRGB *leds;
+    FrameBuffer *frame_buffer;
 
     Effects(Matrix *matrix);
 
@@ -80,19 +79,11 @@ public:
     static const int RandomPaletteIndex = 9;
 
     void CyclePalette();
-    void RandomPalette();
-    void loadPalette(int index);
-    void setupGrayscalePalette();
-    void setupIcePalette();
 
     void drawForegroundHLine(int16_t x0, int16_t x1, int16_t y);
     void fillForegroundRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
     uint16_t XY( uint8_t x, uint8_t y);
 
-
-    // Oscillators and Emitters
-    // set the speeds (and by that ratios) of the oscillators here
-    void MoveOscillators();
 
     // scale the brightness of the frame buffer down
     void DimAll(byte value);
@@ -122,11 +113,11 @@ public:
     // expand everything within a circle
     void Expand(int centerX, int centerY, int radius, byte dimm);
 
-    // give it a linear tail to the right
-    void StreamRight(byte scale, int fromX = 0, int toX = MATRIX_WIDTH, int fromY = 0, int toY = MATRIX_HEIGHT);
-
-    // give it a linear tail to the left
-    void StreamLeft(byte scale, int fromX = MATRIX_WIDTH, int toX = 0, int fromY = 0, int toY = MATRIX_HEIGHT);
+//TODO    // give it a linear tail to the right
+//    void StreamRight(byte scale, int fromX = 0, int toX = MATRIX_WIDTH, int fromY = 0, int toY = MATRIX_HEIGHT);
+//
+//    // give it a linear tail to the left
+//    void StreamLeft(byte scale, int fromX = MATRIX_WIDTH, int toX = 0, int fromY = 0, int toY = MATRIX_HEIGHT);
 
     // give it a linear tail downwards
     void StreamDown(byte scale);
@@ -178,7 +169,6 @@ public:
 
     void MoveFractionalNoiseX(byte amt = 16);
     void MoveFractionalNoiseY(byte amt = 16);
-
 };
 
 #endif

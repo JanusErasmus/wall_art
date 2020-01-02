@@ -26,8 +26,9 @@
 
 class PatternFlowField : public Drawable {
 public:
-    PatternFlowField(Effects *effects) : Drawable(effects) {
+    PatternFlowField(Effects *effects, Boid *boids) : Drawable(effects) {
         name = (char *)"FlowField";
+        this->boids = boids;
     }
 
     uint16_t x;
@@ -38,18 +39,19 @@ public:
     uint16_t scale = 26;
 
     static const int count = 5;
-    Boid boids[5];
+    Boid *boids;
 
     byte hue = 0;
 
     void start() {
+        Matrix *matrix = effects->getMatrix();
         x = random16();
         y = random16();
         z = random16();
 
         for (int i = 0; i < count; i++) {
-            boids[i].location.x = random() % MATRIX_WIDTH;
-            boids[i].location.y = random() % MATRIX_HEIGHT;
+            boids[i].location.x = rand() % (matrix->frame_buffer->width);
+            boids[i].location.y = rand() % (matrix->frame_buffer->height);
         }
     }
 
@@ -62,25 +64,27 @@ public:
         for (int i = 0; i < count; i++) {
             Boid *boid = &boids[i];
 
-            int ioffset = scale * boid->location.x;
-            int joffset = scale * boid->location.y;
+            //int ioffset = scale * boid->location.x;
+            //int joffset = scale * boid->location.y;
 
-            byte angle = inoise8(x + ioffset, y + joffset, z);
+            byte angle = rand() % 255;// inoise8(x + ioffset, y + joffset, z);
 
             boid->velocity.x = (float) sin8(angle) * 0.0078125 - 1.0;
             boid->velocity.y = -((float)cos8(angle) * 0.0078125 - 1.0);
             boid->update();
 
-            //backgroundLayer.drawPixel(boid->location.x, boid->location.y, effects.ColorFromCurrentPalette(angle + hue)); // color
-            //effects.Pixel(boid->location.x, boid->location.y, color); // color
+            if (
+                    boid->location.x < 0 ||
+                    boid->location.x >= (matrix->frame_buffer->width) ||
+                    boid->location.y < 0 ||
+                    boid->location.y >= (matrix->frame_buffer->height)
+            ) {
+                boid->location.x = rand() % (matrix->frame_buffer->width);
+                boid->location.y = rand() % (matrix->frame_buffer->height);
+            }
+
             CRGB color = effects->ColorFromCurrentPalette(effects->ColorFromCurrentPalette(angle + hue));
             matrix->drawPixel(boid->location.x, boid->location.y, color);
-
-            if (boid->location.x < 0 || boid->location.x >= MATRIX_WIDTH ||
-                    boid->location.y < 0 || boid->location.y >= MATRIX_HEIGHT) {
-                boid->location.x = random() % MATRIX_WIDTH - 1;
-                boid->location.y = 0;
-            }
         }
 
         EVERY_N_MILLIS(200) {

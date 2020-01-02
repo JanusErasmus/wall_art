@@ -40,11 +40,33 @@ typedef uint8_t byte;
 
 class Boid {
 
-    bool enabled = true;
 
-    PVector separate(Boid boids [], uint8_t boidCount);
+    PVector separate(Boid *boids, uint8_t boidCount);
+    // Alignment
+    // For every nearby boid in the system, calculate the average velocity
+    PVector align(Boid *boids, uint8_t boidCount);
 
-  public:
+    // Cohesion
+    // For the average location (i.e. center) of all nearby boids, calculate steering vector towards that location
+    PVector cohesion(Boid *boids, uint8_t boidCount);
+
+    // We accumulate a new acceleration each time based on three rules
+    void flock(Boid *boids, uint8_t boidCount);
+
+    // A method that calculates and applies a steering force towards a target
+    // STEER = DESIRED MINUS VELOCITY
+    PVector seek(PVector target);
+
+    // A method that calculates a steering force towards a target
+    // STEER = DESIRED MINUS VELOCITY
+    void arrive(PVector target);
+
+
+    void avoidBorders();
+    bool bounceOffBorders(float bounce);
+    void render();
+
+public:
     PVector location;
     PVector velocity;
     PVector acceleration;
@@ -59,39 +81,15 @@ class Boid {
     Boid(float x, float y);
     virtual ~Boid();
 
-    static float randomf();
-
-    void run(Boid boids [], uint8_t boidCount);
-
-    // Method to update location
+    void run(Boid *boids, uint8_t boidCount);
     void update();
+
+    static float randomf();
 
     void applyForce(PVector force);
     void repelForce(PVector obstacle, float radius);
-
-    // We accumulate a new acceleration each time based on three rules
-    void flock(Boid boids [], uint8_t boidCount);
-
-    // Alignment
-    // For every nearby boid in the system, calculate the average velocity
-    PVector align(Boid boids [], uint8_t boidCount);
-
-    // Cohesion
-    // For the average location (i.e. center) of all nearby boids, calculate steering vector towards that location
-    PVector cohesion(Boid boids [], uint8_t boidCount);
-
-    // A method that calculates and applies a steering force towards a target
-    // STEER = DESIRED MINUS VELOCITY
-    PVector seek(PVector target);
-
-    // A method that calculates a steering force towards a target
-    // STEER = DESIRED MINUS VELOCITY
-    void arrive(PVector target);
-
     void wrapAroundBorders();
-    void avoidBorders();
-    bool bounceOffBorders(float bounce);
-    void render();
+
 };
 
 
