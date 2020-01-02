@@ -21,10 +21,10 @@ class AnimateDisco : public Drawable
     void get_scale(int row, int col, int *r, int *g, int *b);
 
 public:
-    AnimateDisco(Effects *effects);
+    AnimateDisco();
     virtual ~AnimateDisco();
 
-    unsigned int drawFrame();
+    unsigned int drawFrame(Effects *effects);
 };
 
 #endif /* SRC_ANIMATE_DISCO_H_ */

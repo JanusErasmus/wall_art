@@ -64,11 +64,11 @@ private:
     }
 
 public:
-    PatternSpiral(Effects *effects) : Drawable(effects) {
+    PatternSpiral() {
         name = (char *)"Spiral";
     }
 
-    void start() {
+    void start(Matrix *matrix) {
         // set all counting directions positive for the beginning
         for (int i = 0; i < timers; i++) multiTimer[i].delta = 1;
 
@@ -78,13 +78,13 @@ public:
 
         multiTimer[0].lastMillis = now;
         multiTimer[0].takt = 42;     //x1
-        multiTimer[0].up = MATRIX_WIDTH - 1;
+        multiTimer[0].up = matrix->MATRIX_WIDTH - 1;
         multiTimer[0].down = 0;
         multiTimer[0].count = 0;
 
         multiTimer[1].lastMillis = now;
         multiTimer[1].takt = 55;     //y1
-        multiTimer[1].up = MATRIX_HEIGHT - 1;
+        multiTimer[1].up = matrix->MATRIX_HEIGHT - 1;
         multiTimer[1].down = 0;
         multiTimer[1].count = 0;
 
@@ -96,18 +96,18 @@ public:
 
         multiTimer[3].lastMillis = now;
         multiTimer[3].takt = 71;     //x2  
-        multiTimer[3].up = MATRIX_WIDTH - 1;
+        multiTimer[3].up = matrix->MATRIX_WIDTH - 1;
         multiTimer[3].down = 0;
         multiTimer[3].count = 0;
 
         multiTimer[4].lastMillis = now;
         multiTimer[4].takt = 89;     //y2
-        multiTimer[4].up = MATRIX_HEIGHT - 1;
+        multiTimer[4].up = matrix->MATRIX_HEIGHT - 1;
         multiTimer[4].down = 0;
         multiTimer[4].count = 0;
     }
 
-    unsigned int drawFrame() {
+    unsigned int drawFrame(Effects *effects) {
         // manage the Oszillators
         UpdateTimers();
 
@@ -123,8 +123,7 @@ public:
         // increase the contrast
         effects->DimAll(224);
 
-        Matrix *matrix = effects->getMatrix();
-        matrix->paint();
+        effects->matrix->paint();
         return 0;
     }
 };

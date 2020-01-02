@@ -36,13 +36,12 @@
 
 class PatternCube : public Drawable {
 private:
-    float focal = 30; // Focal of the camera
-    int cubeWidth = mmin(MATRIX_WIDTH-4,MATRIX_HEIGHT-4); // Cube size
+    float focal = 30;  // Focal of the camera
+    int cubeWidth = 0; // Cube size
     float Angx = 20.0, AngxSpeed = 0.05; // rotation (angle+speed) around X-axis
     float Angy = 10.0, AngySpeed = 0.05; // rotation (angle+speed) around Y-axis
-    float Ox = MATRIX_WIDTH/2, Oy = MATRIX_HEIGHT/2; // position (x,y) of the frame center
-    //int zCamera = 110; // distance from cube to the eye of the camera
-    int zCamera = MATRIX_WIDTH * 5; // distance from cube to the eye of the camera
+    float Ox = 0, Oy = 0; // position (x,y) of the frame center
+    int zCamera = 5; // distance from cube to the eye of the camera
 
     // Local vertices
     Vertex  local[8];
@@ -155,12 +154,20 @@ private:
     int step = 0;
 
 public:
-    PatternCube(Effects *effects) : Drawable(effects) {
+    PatternCube() {
         name = (char *)"Cube";
+    }
+
+    void start(Matrix *matrix)
+    {
+        cubeWidth = matrix->MATRIX_WIDTH-4;
+        Ox = matrix->MATRIX_WIDTH/2;
+        Oy = matrix->MATRIX_HEIGHT/2;
+        zCamera = matrix->MATRIX_WIDTH * 5;
         make(cubeWidth);
     }
 
-    unsigned int drawFrame() {
+    unsigned int drawFrame(Effects *effects) {
 
 #if FASTLED_VERSION >= 3001000
         if (MATRIX_WIDTH > 32)  {
@@ -176,7 +183,7 @@ public:
         //fadeToBlackBy( matrixleds, NUMMATRIX, 128);
 
         //zCamera = beatsin8(2, 100, 140);
-        zCamera = beatsin8(2, 120, 150);
+        zCamera = beatsin8(2, 100, 140);
         AngxSpeed = beatsin8(3, 1, 5) / 100.0f;
         AngySpeed = beatcos8(5, 1, 5) / 100.0f;
 
@@ -194,7 +201,7 @@ public:
         int i;
 
         CRGB color = effects->ColorFromCurrentPalette(hue, 64);
-        Matrix *matrix = effects->getMatrix();
+        Matrix *matrix = effects->matrix;
 
         // Backface
         EdgePoint *e;

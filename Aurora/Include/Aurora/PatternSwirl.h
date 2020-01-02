@@ -32,38 +32,38 @@ private:
     const uint8_t borderWidth = 0;
 
 public:
-    PatternSwirl(Effects *effects) : Drawable(effects) {
+    PatternSwirl() {
         name = (char *)"Swirl";
     }
 
     void start() {
     }
 
-    unsigned int drawFrame() {
+    unsigned int drawFrame(Effects *effects) {
         // Apply some blurring to whatever's already on the matrix
         // Note that we never actually clear the matrix, we just constantly
         // blur it repeatedly.  Since the blurring is 'lossy', there's
         // an automatic trend toward black -- by design.
         uint8_t blurAmount = beatsin8(2, 128, 255);
-        Matrix *matrix = effects->getMatrix();
+        Matrix *matrix = effects->matrix;
 
         effects->DimAll(blurAmount);
 
         // Use two out-of-sync sine waves
-        uint8_t  i = beatsin8(27, borderWidth, MATRIX_HEIGHT - borderWidth);
-        uint8_t  j = beatsin8(41, borderWidth, MATRIX_WIDTH - borderWidth);
+        uint8_t  i = beatsin8(27, borderWidth, matrix->MATRIX_HEIGHT - borderWidth);
+        uint8_t  j = beatsin8(41, borderWidth, matrix->MATRIX_WIDTH - borderWidth);
         // Also calculate some reflections
-        uint8_t ni = (MATRIX_WIDTH - 1) - i;
-        uint8_t nj = (MATRIX_WIDTH - 1) - j;
+        uint8_t ni = (matrix->MATRIX_WIDTH - 1) - i;
+        uint8_t nj = (matrix->MATRIX_WIDTH - 1) - j;
 
         // The color of each point shifts over time, each at a different speed.
         uint16_t ms = HAL_GetTick();
-        effects->leds[effects->XY(i, j)  ] += effects->XY(i, j)  == NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 11);
-        effects->leds[effects->XY(j, i)  ] += effects->XY(j, i)  == NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 13);
-        effects->leds[effects->XY(ni, nj)] += effects->XY(ni, nj)== NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 17);
-        effects->leds[effects->XY(nj, ni)] += effects->XY(nj, ni)== NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 29);
-        effects->leds[effects->XY(i, nj) ] += effects->XY(i, nj) == NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 37);
-        effects->leds[effects->XY(ni, j) ] += effects->XY(ni, j) == NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 41);
+        effects->leds[effects->XY(i, j)  ] += effects->XY(i, j)  == matrix->NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 11);
+        effects->leds[effects->XY(j, i)  ] += effects->XY(j, i)  == matrix->NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 13);
+        effects->leds[effects->XY(ni, nj)] += effects->XY(ni, nj)== matrix->NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 17);
+        effects->leds[effects->XY(nj, ni)] += effects->XY(nj, ni)== matrix->NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 29);
+        effects->leds[effects->XY(i, nj) ] += effects->XY(i, nj) == matrix->NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 37);
+        effects->leds[effects->XY(ni, j) ] += effects->XY(ni, j) == matrix->NUMMATRIX-1 ? CRGB::Black : effects->ColorFromCurrentPalette(ms / 41);
 
         matrix->paint();
         return 0;

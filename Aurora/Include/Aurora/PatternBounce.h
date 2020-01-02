@@ -34,7 +34,7 @@ private:
     PVector gravity = PVector(0, 0.0125);
 
 public:
-    PatternBounce(Effects *effects) : Drawable(effects) {
+    PatternBounce() {
         name = (char *)"Bounce";
         for (int i = 0; i < count; i++) {
             boids[i] = new Boid();
@@ -47,7 +47,7 @@ public:
         }
     }
 
-    void start() {
+    void start(Matrix *matrix) {
         unsigned int colorWidth = 256 / count;
         for (int i = 0; i < count; i++) {
             Boid *boid = boids[i];
@@ -61,12 +61,12 @@ public:
         }
     }
 
-    unsigned int drawFrame()
+    unsigned int drawFrame(Effects *effects)
     {
         if(!effects)
             return 0;
 
-        Matrix *matrix = effects->getMatrix();
+        Matrix *matrix = effects->matrix;
 
         // dim all pixels on the display
         effects->DimAll(230);
@@ -99,9 +99,9 @@ public:
             // drawPixel takes care of it
             matrix->drawPixel(boid->location.x, boid->location.y, color);
 
-            if (boid->location.y >= MATRIX_HEIGHT - 1)
+            if (boid->location.y >= effects->matrix->MATRIX_HEIGHT - 1)
             {
-                boid->location.y = MATRIX_HEIGHT - 1;
+                boid->location.y = matrix->MATRIX_HEIGHT - 1;
                 boid->velocity.y *= -1.0;
             }
         }

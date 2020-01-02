@@ -38,7 +38,7 @@
 
 class PatternFlock : public Drawable {
 public:
-    PatternFlock(Effects *effects) : Drawable(effects) {
+    PatternFlock() {
         name = (char *)"Flock";
     }
 
@@ -50,16 +50,16 @@ public:
     byte hue = 0;
     bool predatorPresent = true;
 
-    void start() {
+    void start(Matrix *matrix) {
         for (int i = 0; i < boidCount; i++) {
-            boids[i].location.x = MATRIX_CENTER_X;
-            boids[i].location.y = MATRIX_CENTRE_Y;
+            boids[i].location.x = matrix->MATRIX_CENTER_X;
+            boids[i].location.y = matrix->MATRIX_CENTRE_Y;
             boids[i].maxspeed = 0.380;
             boids[i].maxforce = 0.015;
         }
 
 
-        predator = Boid(MATRIX_CENTER_X / 2, MATRIX_CENTER_Y / 2);
+        predator = Boid(matrix->MATRIX_CENTER_X / 2, matrix->MATRIX_CENTER_Y / 2);
         predatorPresent = true;
         predator.maxspeed = 0.385;
         predator.maxforce = 0.020;
@@ -67,8 +67,8 @@ public:
         predator.desiredseparation = 0.0;
     }
 
-    unsigned int drawFrame() {
-        Matrix *matrix = effects->getMatrix();
+    unsigned int drawFrame(Effects *effects) {
+        Matrix *matrix = effects->matrix;
         effects->DimAll(230);
 
         bool applyWind = (random() % 255) > 128;
@@ -89,7 +89,7 @@ public:
             }
 
             boid->run(boids, boidCount);
-            boid->wrapAroundBorders();
+            boid->wrapAroundBorders(matrix->MATRIX_WIDTH, matrix->MATRIX_HEIGHT);
             //boid->avoidBorders();
             PVector location = boid->location;
             // PVector velocity = boid->velocity;
@@ -106,7 +106,7 @@ public:
 
         if (predatorPresent) {
             predator.run(boids, boidCount);
-            predator.wrapAroundBorders();
+            predator.wrapAroundBorders(matrix->MATRIX_WIDTH, matrix->MATRIX_HEIGHT);
             //predator.avoidBorders();
             color = effects->ColorFromCurrentPalette(hue + 128);
             PVector location = predator.location;

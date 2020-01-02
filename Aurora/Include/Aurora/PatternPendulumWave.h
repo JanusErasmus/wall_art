@@ -36,18 +36,18 @@
 
 class PatternPendulumWave : public Drawable {
 public:
-    PatternPendulumWave(Effects *effects) : Drawable(effects) {
+    PatternPendulumWave() {
         name = (char *)"Pendulum Wave";
     }
 
-    unsigned int drawFrame() {
-        Matrix *matrix = effects->getMatrix();
+    unsigned int drawFrame(Effects *effects) {
+        Matrix *matrix = effects->matrix;
         effects->DimAll(200);
 
-        for (int x = 0; x < MATRIX_WIDTH; x++)
+        for (int x = 0; x < matrix->MATRIX_WIDTH; x++)
         {
             //uint8_t y = beatsin8(x + MATRIX_WIDTH, 0, MATRIX_HEIGHT);
-            uint8_t y = beatsin8(x + 1, 0, MATRIX_HEIGHT);
+            uint8_t y = beatsin8(x + 1, 0, matrix->MATRIX_HEIGHT);
 
             //backgroundLayer.drawPixel(x, y, effects.ColorFromCurrentPalette(x * 7));
             CRGB color = effects->ColorFromCurrentPalette(x * 7);

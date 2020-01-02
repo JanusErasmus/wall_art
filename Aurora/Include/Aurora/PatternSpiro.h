@@ -29,12 +29,12 @@ private:
     byte theta2 = 0;
     byte hueoffset = 0;
 
-    uint8_t radiusx = MATRIX_WIDTH / 4;
-    uint8_t radiusy = MATRIX_HEIGHT / 4;
-    uint8_t minx = MATRIX_CENTER_X - radiusx;
-    uint8_t maxx = MATRIX_CENTER_X + radiusx + 1;
-    uint8_t miny = MATRIX_CENTER_Y - radiusy;
-    uint8_t maxy = MATRIX_CENTER_Y + radiusy + 1;
+    uint8_t radiusx;
+    uint8_t radiusy;
+    uint8_t minx;
+    uint8_t maxx;
+    uint8_t miny;
+    uint8_t maxy;
 
     uint8_t spirocount = 5;
     uint8_t spirooffset = 256 / spirocount;
@@ -43,12 +43,22 @@ private:
     boolean handledChange = false;
 
 public:
-    PatternSpiro(Effects *effects) : Drawable(effects) {
+    PatternSpiro() {
         name = (char *)"Spiro";
     }
 
-    unsigned int drawFrame() {
-        Matrix *matrix = effects->getMatrix();
+    void start(Matrix *matrix) {
+
+        radiusx = matrix->MATRIX_WIDTH / 4;
+        radiusy = matrix->MATRIX_HEIGHT / 4;
+        minx    = matrix->MATRIX_CENTER_X - radiusx;
+        maxx    = matrix->MATRIX_CENTER_X + radiusx + 1;
+        miny    = matrix->MATRIX_CENTER_Y - radiusy;
+        maxy    = matrix->MATRIX_CENTER_Y + radiusy + 1;
+    }
+
+    unsigned int drawFrame(Effects *effects) {
+        Matrix *matrix = effects->matrix;
         effects->DimAll(254);
 
         boolean change = false;
@@ -67,7 +77,7 @@ public:
             // Some coordinates are off screen, using drawpixel avoids the artifact of overwriting pixel0
             matrix->drawPixel(x2, y2, color);
             // On bigger displays, make the dot faster
-            if (MATRIX_WIDTH>32) {
+            if (matrix->MATRIX_WIDTH>32) {
                 matrix->drawPixel(x2-1, y2-0, color);
                 matrix->drawPixel(x2-1, y2-1, color);
                 matrix->drawPixel(x2-0, y2-1, color);
@@ -80,8 +90,8 @@ public:
                 matrix->drawPixel(x2+0, y2+1, color);
             }
 
-            if((x2 == MATRIX_CENTER_X && y2 == MATRIX_CENTER_Y) ||
-                    (x2 == MATRIX_CENTRE_X && y2 == MATRIX_CENTRE_Y)) change = true;
+            if((x2 == matrix->MATRIX_CENTER_X && y2 == matrix->MATRIX_CENTER_Y) ||
+                    (x2 == matrix->MATRIX_CENTRE_X && y2 == matrix->MATRIX_CENTRE_Y)) change = true;
         }
 
         theta2 += 1;
@@ -94,7 +104,7 @@ public:
             if (change && !handledChange) {
                 handledChange = true;
 
-                if (spirocount >= MATRIX_WIDTH || spirocount == 1) spiroincrement = !spiroincrement;
+                if (spirocount >= matrix->MATRIX_WIDTH || spirocount == 1) spiroincrement = !spiroincrement;
 
                 if (spiroincrement) {
                     if(spirocount >= 4)

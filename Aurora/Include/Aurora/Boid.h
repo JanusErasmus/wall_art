@@ -88,9 +88,9 @@ class Boid {
     // STEER = DESIRED MINUS VELOCITY
     void arrive(PVector target);
 
-    void wrapAroundBorders();
-    void avoidBorders();
-    bool bounceOffBorders(float bounce);
+    void wrapAroundBorders(int width, int height);
+    void avoidBorders(int width, int height);
+    bool bounceOffBorders(float bounce,int width, int height);
     void render();
 };
 

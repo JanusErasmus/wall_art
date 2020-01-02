@@ -44,46 +44,36 @@
 
 
 class Effects {
-    Matrix *matrix;
     static const int paletteCount = 10;
     TBlendType currentBlendType = LINEARBLEND;
     int paletteIndex;
     const CRGBPalette16 *currentPalette;
     char* currentPaletteName;
 
+    int curr_pattern;
 
-    uint32_t noise_x;
-    uint32_t noise_y;
-    uint32_t noise_z;
-    uint32_t noise_scale_x;
-    uint32_t noise_scale_y;
-    uint8_t noise[MATRIX_WIDTH][MATRIX_HEIGHT];
-    uint8_t noisesmoothing;
 
-    // the oscillators: linear ramps 0-255
-    byte osci[6];
+//    uint32_t noise_x;
+//    uint32_t noise_y;
+//    uint32_t noise_z;
+//    uint32_t noise_scale_x;
+//    uint32_t noise_scale_y;
+//    uint8_t noise[MATRIX_WIDTH][MATRIX_HEIGHT];
+//    uint8_t noisesmoothing;
 
-    // sin8(osci) swinging between 0 to MATRIX_WIDTH - 1
-    byte p[6];
 
 public:
     CRGB *leds;
+    Matrix *matrix;
 
     Effects(Matrix *matrix);
 
-    Matrix *getMatrix(){ return matrix; }
-
-    void CircleStream(uint8_t value);
-
-    // palettes
-    static const int HeatColorsPaletteIndex = 6;
-    static const int RandomPaletteIndex = 9;
+    void run();
 
     void CyclePalette();
     void RandomPalette();
-    void loadPalette(int index);
-    void setupGrayscalePalette();
-    void setupIcePalette();
+
+    void setNextPattern();
 
     void drawForegroundHLine(int16_t x0, int16_t x1, int16_t y);
     void fillForegroundRectangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1);
@@ -115,6 +105,9 @@ public:
     void Caleidoscope5();
     void Caleidoscope6();
 
+
+    void CircleStream(uint8_t value);
+
     // create a square twister to the left or counter-clockwise
     // x and y for center, r for radius
     void SpiralStream(int x, int y, int r, byte dimm);
@@ -123,10 +116,10 @@ public:
     void Expand(int centerX, int centerY, int radius, byte dimm);
 
     // give it a linear tail to the right
-    void StreamRight(byte scale, int fromX = 0, int toX = MATRIX_WIDTH, int fromY = 0, int toY = MATRIX_HEIGHT);
+    void StreamRight(byte scale, int fromX = 0, int toX = -1, int fromY = 0, int toY = -1);
 
     // give it a linear tail to the left
-    void StreamLeft(byte scale, int fromX = MATRIX_WIDTH, int toX = 0, int fromY = 0, int toY = MATRIX_HEIGHT);
+    void StreamLeft(byte scale, int fromX = -1, int toX = 0, int fromY = 0, int toY = -1);
 
     // give it a linear tail downwards
     void StreamDown(byte scale);
@@ -169,9 +162,9 @@ public:
     CRGB ColorFromCurrentPalette(uint8_t index = 0, uint8_t brightness = 255, TBlendType blendType = LINEARBLEND);
     CRGB HsvToRgb(uint8_t h, uint8_t s, uint8_t v);
 
-    void NoiseVariablesSetup();
-    void FillNoise();
-    void standardNoiseSmearing();
+//    void NoiseVariablesSetup();
+//    void FillNoise();
+//    void standardNoiseSmearing();
 
     void MoveX(byte delta);
     void MoveY(byte delta);

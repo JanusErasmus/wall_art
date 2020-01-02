@@ -2,70 +2,15 @@
 
 #include "main.h"
 #include "led_matrix.h"
-#include "Aurora/animate_disco.h"
-#include "Aurora/PatternBounce.h"
-#include "Aurora/PatternFlock.h"
-#include "Aurora/PatternSwirl.h"
-#include "Aurora/PatternSpiral.h"
-#include "Aurora/PatternSpiro.h"
-#include "Aurora/PatternWave.h"
-#include "Aurora/PatternRadar.h"
-#include "Aurora/PatternPendulumWave.h"
-#include "Aurora/PatternIncrementalDrift.h"
-#include "Aurora/PatternFlowField.h"
-#include "Aurora/PatternAttract.h"
-#include "Aurora/PatternCube.h"
 #include "Aurora/Effects.h"
 
 LEDmatrix matrix;
 Effects effects(&matrix);
 
-AnimateDisco disco(&effects);
-PatternBounce bounce(&effects);
-PatternFlock flock(&effects);
-PatternSwirl swirl(&effects);
-PatternSpiral spiral(&effects); //TODO NOT working
-PatternSpiro spiro(&effects); //TODO NOT working
-PatternWave wave(&effects);
-PatternRadar radar(&effects);
-PatternPendulumWave p_wave(&effects);
-PatternIncrementalDrift drift(&effects);
-PatternFlowField flow(&effects);//TODO NOT working
-PatternAttract attract(&effects);
-PatternCube cube(&effects); //TODO NOT working
-
-Drawable *patterns[] = {
-        &cube,
-        &bounce,
-        &flock,
-        &swirl,
-        &spiral,
-        &spiro,
-        &wave,
-        &radar,
-        //&p_wave,
-        &drift,
-        &flow,
-        &attract,
-        &disco,
-        0
-};
-
-int curr_pattern = 0;
-void setNextPattern()
-{
-    curr_pattern++;
-    if(!patterns[curr_pattern])
-        curr_pattern = 0;
-
-    printf("Starting pattern: %s\n", patterns[curr_pattern]->name);
-    patterns[curr_pattern]->start();
-}
 
 extern "C" {
 void cpp_init()
 {
-    patterns[curr_pattern]->start();
 }
 
 uint32_t tick = 0;
@@ -77,12 +22,12 @@ void cpp_run()
     if(tick < HAL_GetTick())
     {
         tick = HAL_GetTick() + 20;
-        patterns[curr_pattern]->drawFrame();
+        effects.run();
     }
 
     if(!HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin))
     {
-        setNextPattern();
+        effects.setNextPattern();
 
         while(!HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin))
         {
@@ -93,7 +38,7 @@ void cpp_run()
 
 void pattern(uint8_t argc, char **argv)
 {
-    setNextPattern();
+    effects.setNextPattern();
 }
 
 void palette(uint8_t argc, char **argv)
