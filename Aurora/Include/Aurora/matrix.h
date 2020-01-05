@@ -14,8 +14,7 @@ class Matrix
 protected:
 
 public:
-    CRGB *framebuffer;
-//    CRGB framebuffer[16][16];
+    CRGB *frame_buffer;
     int MATRIX_WIDTH;
     int MATRIX_HEIGHT;
     int NUM_LEDS;
@@ -26,7 +25,7 @@ public:
     byte MATRIX_CENTRE_Y;
 
     Matrix(int width, int height);
-    virtual ~Matrix(){}
+    virtual ~Matrix();
 
     virtual void drawPixel(int x, int y, CRGB color) = 0;
     virtual void drawPixel(int16_t x, int16_t y, uint16_t color) = 0;

@@ -16,7 +16,7 @@ void LEDmatrix::drawPixel(int x, int y, CRGB color)
     if(y > MATRIX_WIDTH)
         y = 15;
 
-    framebuffer[x + y * MATRIX_WIDTH] = color;
+    frame_buffer[x + y * MATRIX_WIDTH] = color;
 }
 
 void LEDmatrix::drawPixel(int16_t x, int16_t y, uint16_t color)
@@ -35,7 +35,7 @@ void  LEDmatrix::paint()
     {
         for (int col = 0; col < MATRIX_WIDTH; ++col)
         {
-            CRGB color = framebuffer[col + row * MATRIX_WIDTH];
+            CRGB color = frame_buffer[col + row * MATRIX_WIDTH];
             ws2812b_set_pixel(row, col, color.r, color.g, color.b);
         }
     }

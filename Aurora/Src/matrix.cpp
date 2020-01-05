@@ -14,5 +14,10 @@ Matrix::Matrix(int width, int height)
     MATRIX_CENTRE_X = MATRIX_CENTER_X - 1;
     MATRIX_CENTRE_Y = MATRIX_CENTER_Y - 1;
 
-    framebuffer = (CRGB*)malloc(NUMMATRIX * sizeof(CRGB));
+    frame_buffer = (CRGB*)malloc(NUMMATRIX * sizeof(CRGB));
+}
+
+Matrix::~Matrix()
+{
+    free(frame_buffer);
 }

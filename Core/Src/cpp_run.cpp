@@ -7,7 +7,6 @@
 LEDmatrix matrix;
 Effects effects(&matrix);
 
-
 extern "C" {
 void cpp_init()
 {

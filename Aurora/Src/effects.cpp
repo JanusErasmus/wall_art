@@ -82,7 +82,7 @@ Effects::Effects(Matrix *matrix)
     curr_pattern = 0;
     paletteIndex = 0;
     this->matrix = matrix;
-    leds = matrix->framebuffer;// &matrix->framebuffer[0][0];
+    leds = matrix->frame_buffer;// &matrix->framebuffer[0][0];
     currentPalette = &RainbowColors_p;
 
     patterns[curr_pattern]->start(matrix);
